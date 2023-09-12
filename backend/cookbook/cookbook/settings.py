@@ -41,9 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
-    'users',
-    'recipes',
+    'django_filters',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
+    'users.apps.UsersConfig',
+    'recipes.apps.RecipesConfig',
+    'api.apps.ApiConfig',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +143,40 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.User'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'SEARCH_PARAM': 'name',
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+    ],
+}
+
+DJOSER = {
+    'HIDE_USERS': False,
+    'PERMISSIONS': {
+        'user': [
+            'rest_framework.permissions.AllowAny'
+        ],
+        'user_list': [
+            'rest_framework.permissions.AllowAny'
+        ],
+        'current_user': [
+            'rest_framework.permissions.AllowAny'
+        ],
+    },
+    'SERIALIZERS': {
+        'set_password': 'djoser.serializers.SetPasswordSerializer',
+        'user': 'djoser.serializers.UserSerializer',
+        'user_list': 'djoser.serializers.UserSerializer',  
+    },
+}
