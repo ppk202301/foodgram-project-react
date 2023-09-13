@@ -9,49 +9,56 @@ class User(AbstractUser):
     email = models.EmailField(
         'Email',
         max_length=254,
-        unique=True
+        unique=True,
+        help_text='Could not be empty.'
     )
 
     bio = models.TextField(
         'About',
         max_length=300,
-        blank=True
+        blank=True,
+        help_text='Write some words about yourself.'
     )
 
     class Meta:
         ordering = ('id',)
 
     def __str__(self):
-        return self.username
+        return f'{self.username}'
 
 
 class Follow(models.Model):
-    """Follow to author of recipe model."""
+    """Follow to the author of the recipe model."""
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='follower',
-        verbose_name='Follower'
+        verbose_name='Follower',
+        help_text='Point the user interested in the author.'
     )
 
     following = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='following',
-        verbose_name='Author'
+        verbose_name='Author',
+        help_text='Any interesting author.'
     )
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'following'],
-                name='user_following'
-            ),
             models.CheckConstraint(
                 check=~models.Q(following=models.F('user')),
                 name='protect_self_following'
             ),
+            models.UniqueConstraint(
+                fields=['user', 'following'],
+                name='user_following'
+            ),
         ]
 
     def __str__(self):
-        return f'Author {self.following} has follower {self.user}.'
+        return (
+            f'Author {self.following.username} '
+            f'has follower {self.user.username}'
+        )

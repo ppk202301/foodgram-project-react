@@ -19,6 +19,9 @@ class UserAdmin(UserAdmin):
         'last_name',
         'bio'
     )
+    list_editable = (
+        'is_active',
+    )
     list_filter = (
         'username',
         'email'
@@ -27,11 +30,20 @@ class UserAdmin(UserAdmin):
         'username',
         'email'
     )
-    list_editable = (
-        'is_active',
-    )
+
 
 @admin.register(Follow)
 class FollowAdmin(admin.ModelAdmin):
     """Admin panel of Follow model."""
-    list_display = ('id', 'user', 'following',)
+    list_display = (
+        'user',
+        'following',
+    )
+    list_filter = (
+        'user',
+        'following',
+    )
+    search_fields = (
+        'user',
+        'following',
+    )
