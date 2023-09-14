@@ -56,18 +56,18 @@ class IngredientAdmin(admin.ModelAdmin):
     """Admin panel for Ingredient model."""
     list_display = (
         'name',
-        'unit'
+        'measurement_unit'
     )
     list_editable = (
-        'unit',
+        'measurement_unit',
     )
     list_filter = (
         'name',
-        'unit'
+        'measurement_unit'
     )
     search_fields = (
         'name',
-        'unit'
+        'measurement_unit'
     )
 
 
