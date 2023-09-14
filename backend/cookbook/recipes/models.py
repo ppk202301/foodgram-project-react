@@ -16,7 +16,7 @@ class Ingredient(models.Model):
         verbose_name='ingredient name',
         help_text='Could not be empty.'
     )
-    unit = models.CharField(
+    measurement_unit = models.CharField(
         max_length=30,
         verbose_name='ingredient unit',
         help_text='Could not be empty.'
@@ -28,8 +28,8 @@ class Ingredient(models.Model):
         ordering = ['name']
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'unit'],
-                name='unique_ingredient'
+                fields=['name', 'measurement_unit'],
+                name='unique_ingredient_unit'
             )
         ]
 
