@@ -8,7 +8,7 @@ from .serializers import SubscriptionSerializer
 
 
 class UserViewSet(UserViewSet):
-    """Кастомизированный вьюсет библиотеки 'djoser'."""
+    """User Viewset"""
     @action(
         methods=['get'],
         detail=False,
