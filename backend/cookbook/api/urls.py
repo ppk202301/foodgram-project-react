@@ -6,12 +6,16 @@ from django.urls import (
 
 from rest_framework.routers import DefaultRouter
 
+app_name = 'api'
 
 router = DefaultRouter()
 
 urlpatterns = [
-    path('', include(router.urls)),
-    path('', include('djoser.urls')),
-    re_path(r'^auth/', include('djoser.urls.authtoken')), 
-    path('auth/', include('djoser.urls.authtoken')),
+    #path('', include('djoser.urls')),
+    #path('auth/', include('djoser.urls.authtoken')),
+    #url(r'^auth/', include('djoser.urls')),
+    #path('auth/', include('djoser.urls')),
+    #re_path(r'^auth/', include('djoser.urls.authtoken')),
+    #re_path(r'^auth/', include('djoser.urls')),
+    #re_path(r'^auth/', include('djoser.urls.authtoken')),
 ]

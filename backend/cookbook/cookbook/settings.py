@@ -148,36 +148,23 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'users.User'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ],
     'SEARCH_PARAM': 'name',
-    'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',
-    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
 }
 
 DJOSER = {
-    'HIDE_USERS': False,
+   'LOGIN_FIELD': 'email',
+   'HIDE_USERS': False,
     'PERMISSIONS': {
-        'user': [
-            'rest_framework.permissions.AllowAny'
-        ],
-        'user_list': [
-            'rest_framework.permissions.AllowAny'
-        ],
-        'current_user': [
-            'rest_framework.permissions.AllowAny'
-        ],
+        'user': ['rest_framework.permissions.IsAuthenticated'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+        'set_password': ['rest_framework.permissions.IsAuthenticated'],
     },
     'SERIALIZERS': {
-        'set_password': 'djoser.serializers.SetPasswordSerializer',
-        'user': 'djoser.serializers.UserSerializer',
-        'user_list': 'djoser.serializers.UserSerializer',  
+       'user': 'users.serializers.UserSerializer',
+       'current_user': 'users.serializers.UserSerializer',
+       'user_create': 'users.serializers.UserCreationSerializer',
     },
 }

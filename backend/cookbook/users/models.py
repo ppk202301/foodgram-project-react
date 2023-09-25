@@ -4,7 +4,14 @@ from django.db import models
 
 class User(AbstractUser):
     """Custom model User."""
-    REQUIRED_FIELDS = ('first_name', 'last_name', 'email')
+    REQUIRED_FIELDS = (
+        'first_name',
+        'last_name',
+        'username',
+        'password'
+    )
+
+    USERNAME_FIELD = 'email'
 
     email = models.EmailField(
         'Email',
@@ -13,11 +20,20 @@ class User(AbstractUser):
         help_text='Could not be empty.'
     )
 
+    first_name = models.CharField(
+        max_length=150,
+        blank=True
+    )
+
     bio = models.TextField(
         'About',
         max_length=300,
         blank=True,
         help_text='Write some words about yourself.'
+    )
+
+    models.CharField(
+        max_length=150
     )
 
     class Meta:
