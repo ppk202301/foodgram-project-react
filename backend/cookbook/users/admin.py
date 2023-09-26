@@ -13,6 +13,7 @@ class UserAdmin(UserAdmin):
     list_display = (
         'id',
         'is_active',
+        'is_staff',
         'username',
         'email',
         'first_name',
@@ -21,6 +22,7 @@ class UserAdmin(UserAdmin):
     )
     list_editable = (
         'is_active',
+        'is_staff',
     )
     list_filter = (
         'username',
