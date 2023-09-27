@@ -3,9 +3,15 @@ from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from users.models import (
+from recipes.serializers import RecipeInfoSerializer
+
+from .models import (
     Follow,
     User
+)
+
+from .utils import (
+    is_subscribed
 )
 
 
@@ -26,13 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
     def get_is_subscribed(self, data):
-        user = self.context['request'].user
-        return (
-            user.is_authenticated and
-            data.follower.filter(
-                following = user
-            ).exists()
-        )
+        return is_subscribed(self, data)
 
 
 class UserCreationSerializer(UserCreateSerializer):
@@ -51,6 +51,9 @@ class UserCreationSerializer(UserCreateSerializer):
 
 class FollowSerializer(serializers.ModelSerializer):
     """Serializer for Follow."""
+    is_subscribed = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -60,7 +63,35 @@ class FollowSerializer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'email',
+            'is_subscribed',
+            'recipes_count',
+            'recipes',
         )
+
+    def get_recipes_count(self, data):
+        return data.recipes.count()
+
+    def get_is_subscribed(self, data):
+        return is_subscribed(self, data)
+
+    def get_recipes(self, data):
+        recipes_limit = self.context.get(
+            'request'
+        ).GET.get(
+            'recipes_limit'
+        )
+        recipes = data.recipes.all()
+
+        if recipes_limit:
+            recipes = recipes[:int(recipes_limit)]
+
+        serializer = RecipeInfoSerializer(
+            recipes,
+            read_only=True,
+            many=True,
+        )
+
+        return serializer.data
 
 
 class FollowCreateSerializer(serializers.ModelSerializer):
@@ -85,7 +116,7 @@ class FollowCreateSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, data):
-        if data['user'] == data['author']:
+        if data['user'] == data['following']:
             raise serializers.ValidationError(
                 'Self suscription is not allowed.'
             )

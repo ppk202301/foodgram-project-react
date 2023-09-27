@@ -13,6 +13,7 @@ from .serializers import (
     FollowCreateSerializer,
     FollowSerializer,
 )
+from .paginator import FollowCustomPaginator
 
 class UserViewSet(UserViewSet):
     """User Viewset"""
@@ -22,11 +23,12 @@ class UserViewSet(UserViewSet):
         detail=True,
     )
     def subscribe(self, request, id):
-        user = self.request.user
         following = self.get_object()
+        user = self.request.user
 
         if request.method == 'DELETE':
-            instance = user.following.filter(following=following)
+            instance = user.follower.filter(following=following)
+
             if not instance:
                 raise serializers.ValidationError(
                     {
@@ -44,31 +46,31 @@ class UserViewSet(UserViewSet):
 
         data = {
             'user': user.id,
-            'following': id
+            'following': id,
         }
 
-        subscription = FollowCreateSerializer(data=data)
-        subscription.is_valid(raise_exception=True)
-        subscription.save()
+        new_follow = FollowCreateSerializer(data=data)
+        new_follow.is_valid(raise_exception=True)
+        new_follow.save()
         serializer = self.get_serializer(following)
 
         return Response(
             serializer.data,
-            status=status.HTTP_201_CREATED
+            status=status.HTTP_201_CREATED,
         )
     
     @action(
         methods=['get'],
         serializer_class=FollowSerializer,
+        pagination_class = FollowCustomPaginator,
         detail=False,
     )
     def subscriptions(self, request):
         user = self.request.user
 
         def queryset():
-            return User.objects.filter(
-                subscriber__user=user
-            )
+            return User.objects.filter(id__in=list(user.following.all().values_list('user_id', flat=True)))
 
         self.get_queryset = queryset
+
         return self.list(request)

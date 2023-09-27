@@ -8,7 +8,7 @@ class User(AbstractUser):
         'first_name',
         'last_name',
         'username',
-        'password'
+        'password',
     )
 
     USERNAME_FIELD = 'email'
