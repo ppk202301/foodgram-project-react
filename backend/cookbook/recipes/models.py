@@ -32,6 +32,7 @@ class Ingredient(models.Model):
                 name='unique_ingredient_unit'
             )
         ]
+        ordering = ['name']
 
     def __str__(self):
         return f'Ingredient: {self.name}, unit: {self.unit}'
@@ -131,6 +132,7 @@ class Recipe(models.Model):
 
 
 class Cart(models.Model):
+    """Cart model."""
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,

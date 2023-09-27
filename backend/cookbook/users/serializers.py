@@ -17,7 +17,6 @@ from .utils import (
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for Users."""
-
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -96,7 +95,6 @@ class FollowSerializer(serializers.ModelSerializer):
 
 class FollowCreateSerializer(serializers.ModelSerializer):
     """Serializer for Follow creation."""
-
     class Meta:
         model = Follow
         fields = (
