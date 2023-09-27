@@ -1,21 +1,20 @@
 from django.urls import (
     include,
     path,
-    re_path
 )
 
 from rest_framework.routers import DefaultRouter
 
+from recipes.views import (
+    TagViewSet
+)
+
+
 app_name = 'api'
 
 router = DefaultRouter()
+router.register(r'tags', TagViewSet, basename='tags')
 
 urlpatterns = [
-    #path('', include('djoser.urls')),
-    #path('auth/', include('djoser.urls.authtoken')),
-    #url(r'^auth/', include('djoser.urls')),
-    #path('auth/', include('djoser.urls')),
-    #re_path(r'^auth/', include('djoser.urls.authtoken')),
-    #re_path(r'^auth/', include('djoser.urls')),
-    #re_path(r'^auth/', include('djoser.urls.authtoken')),
+    path('', include(router.urls)),
 ]

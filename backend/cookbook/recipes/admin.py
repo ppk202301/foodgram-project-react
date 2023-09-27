@@ -166,6 +166,7 @@ class RecipeAdmin(admin.ModelAdmin):
 class TagAdmin(admin.ModelAdmin):
     """Admin panel for Tag model."""
     list_display = (
+        'id',
         'name',
         'color',
         'slug'
