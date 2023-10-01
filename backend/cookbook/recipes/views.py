@@ -1,15 +1,20 @@
 from rest_framework import (
     viewsets
 )
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import (
+    AllowAny,
+    IsAuthenticated
+)
 
 from .models import (
     Ingredient,
-    Tag
+    Recipe,
+    Tag,
 )
 from .serializers import (
     IngredientSerializer,
-    TagSerializer
+    RecipeSerializer,
+    TagSerializer,
 )
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -28,3 +33,20 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         AllowAny,
     )
     queryset = Ingredient.objects.all().order_by('id')
+
+
+class RecipeViewSet(viewsets.ModelViewSet):
+    """Recipe Viewset"""
+    queryset = Recipe.objects.all()
+    http_method_names = [
+        "delete",
+        "get",
+        "patch",
+        "post",
+    ]
+    permission_classes = (
+        IsAuthenticated,
+    )
+
+    def get_serializer_class(self):
+        return RecipeSerializer

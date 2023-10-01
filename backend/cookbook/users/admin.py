@@ -32,6 +32,7 @@ class UserAdmin(UserAdmin):
         'username',
         'email'
     )
+    ordering = ('id',)
 
 
 @admin.register(Follow)

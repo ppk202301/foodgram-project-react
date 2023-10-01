@@ -103,7 +103,6 @@ else:
         }
     }    
 
-
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -154,19 +153,22 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'api.pagination.Paginator',
     'PAGE_SIZE': 6,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend'
+    ],
 }
 
 DJOSER = {
    'LOGIN_FIELD': 'email',
    'HIDE_USERS': False,
-    'PERMISSIONS': {
-        'user': ['rest_framework.permissions.IsAuthenticated'],
-        'user_list': ['rest_framework.permissions.AllowAny'],
-        'set_password': ['rest_framework.permissions.IsAuthenticated'],
-    },
-    'SERIALIZERS': {
-       'user': 'users.serializers.UserSerializer',
-       'current_user': 'users.serializers.UserSerializer',
-       'user_create': 'users.serializers.UserCreationSerializer',
-    },
+   'PERMISSIONS': {
+       'user': ['rest_framework.permissions.AllowAny'],
+       'user_list': ['rest_framework.permissions.AllowAny'],
+       'set_password': ['rest_framework.permissions.IsAuthenticated'],
+   },
+   'SERIALIZERS': {
+      'user': 'users.serializers.UserSerializer',
+      'current_user': 'users.serializers.UserSerializer',
+      'user_create': 'users.serializers.UserCreationSerializer',
+   },
 }

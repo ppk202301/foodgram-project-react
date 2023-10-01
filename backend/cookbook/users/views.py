@@ -6,20 +6,38 @@ from rest_framework import (
     status
 )
 from rest_framework.decorators import action
+from rest_framework.permissions import (
+    IsAuthenticated
+)
 from rest_framework.response import Response
 
 from .models import User
 from .serializers import (
     FollowCreateSerializer,
+    FollowSaveNewSerializer,
     FollowSerializer,
+    UserSerializer,
 )
-from .paginator import FollowCustomPaginator
+from .paginator import (
+    FollowCustomPaginator,
+    UserCustomPaginator,
+)
+
 
 class UserViewSet(UserViewSet):
     """User Viewset"""
+    pagination_class = UserCustomPaginator
+    serializer_class = UserSerializer
+
     @action(
-        methods=['post', 'delete'], 
-        serializer_class=FollowSerializer,
+        methods=[
+            'post',
+            'delete'
+        ], 
+        serializer_class=FollowSaveNewSerializer,
+        permission_classes = (
+            IsAuthenticated,
+        ),
         detail=True,
     )
     def subscribe(self, request, id):
@@ -63,13 +81,23 @@ class UserViewSet(UserViewSet):
         methods=['get'],
         serializer_class=FollowSerializer,
         pagination_class = FollowCustomPaginator,
+        permission_classes = (
+            IsAuthenticated,
+        ),
         detail=False,
     )
     def subscriptions(self, request):
         user = self.request.user
 
         def queryset():
-            return User.objects.filter(id__in=list(user.following.all().values_list('user_id', flat=True)))
+            return User.objects.filter(
+                id__in=list(
+                    user.following.all().values_list(
+                        'user_id',
+                        flat=True
+                    )
+                )
+        )
 
         self.get_queryset = queryset
 

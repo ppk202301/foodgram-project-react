@@ -93,6 +93,11 @@ class FollowSerializer(serializers.ModelSerializer):
         return serializer.data
 
 
+class FollowSaveNewSerializer(FollowSerializer):
+    """Serializer for saving new follower."""
+    def get_is_subscribed(self, data):
+        return True
+
 class FollowCreateSerializer(serializers.ModelSerializer):
     """Serializer for Follow creation."""
     class Meta:
@@ -118,4 +123,5 @@ class FollowCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Self suscription is not allowed.'
             )
+
         return data

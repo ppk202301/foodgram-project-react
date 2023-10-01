@@ -131,14 +131,14 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = (IngredientInline, TagInLine)
     list_display = (
         'name',
-        'about',
+        'text',
         'author',
         'pub_date',
         'production_time',
         'favorite_count',
     )
     list_editable = (
-        'about',
+        'text',
         'production_time',
     )
     list_filter = (
@@ -149,7 +149,6 @@ class RecipeAdmin(admin.ModelAdmin):
     )
     search_fields = (
         'name',
-        'about',
         'author',
         'pub_date',
         'production_time',

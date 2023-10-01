@@ -81,7 +81,7 @@ class Recipe(models.Model):
         verbose_name='Recipe image',
         help_text='Show the final result.'
     )
-    about = models.TextField(
+    text = models.TextField(
         max_length=250,
         blank=True,
         verbose_name='Description',
