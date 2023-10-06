@@ -3,7 +3,7 @@ from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from recipes.serializers import RecipeInfoSerializer
+from recipes.models import Recipe
 
 from .models import (
     Follow,
@@ -13,6 +13,17 @@ from .models import (
 from .utils import (
     is_subscribed
 )
+
+
+class RecipeInfoSerializer(serializers.ModelSerializer):
+    """Serializer for common information about Recipe."""
+    class Meta:
+        model = Recipe
+        fields = (
+            'name', 
+            'about',
+            'author',
+        )
 
 
 class UserSerializer(serializers.ModelSerializer):

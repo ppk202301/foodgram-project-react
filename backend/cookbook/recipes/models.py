@@ -77,7 +77,7 @@ class Recipe(models.Model):
         help_text='Name your recipe.'
     )
     image = models.ImageField(
-        upload_to='recipes/media',
+        upload_to='recipes/image',
         verbose_name='Recipe image',
         help_text='Show the final result.'
     )
@@ -87,7 +87,7 @@ class Recipe(models.Model):
         verbose_name='Description',
         help_text='Describe your recipe.'
     )
-    production_time = models.PositiveIntegerField(
+    cooking_time = models.PositiveIntegerField(
         default=5,
         verbose_name='Recipe production time',
         help_text='Estimate approximate production time in minutes (min 5).',
@@ -203,7 +203,7 @@ class Ingredient_Recipe(models.Model):
         verbose_name='Recipe',
         help_text='Ingredient is a part of this recipe.'
     )
-    quantity = models.FloatField(
+    amount = models.FloatField(
         default=MIN_AMOUNT,
         verbose_name='quantity',
         help_text='Ingredient amount in the recipe (min 0.001).',
@@ -246,13 +246,6 @@ class Recipe_Tag(models.Model):
         verbose_name='Tag',
         help_text='One of recipe tags.'
     )
-    author = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='author',
-        verbose_name='Author',
-        help_text='Point the user who added the tag to the recipe.'
-    )
     reg_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Date of registration'
@@ -270,5 +263,5 @@ class Recipe_Tag(models.Model):
     def __str__(self):
         return (f'Recipe {self.recipe.name} has '
                 f'tag {self.tag.name} '
-                f'added by {self.author.name} on '
-                f'{self.reg_date}')
+                f'added on {self.reg_date}'
+            )

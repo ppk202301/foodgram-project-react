@@ -31,8 +31,8 @@ class UserViewSet(UserViewSet):
 
     @action(
         methods=[
+            'delete',
             'post',
-            'delete'
         ], 
         serializer_class=FollowSaveNewSerializer,
         permission_classes = (

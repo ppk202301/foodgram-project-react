@@ -51,39 +51,20 @@ class FavoriteAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    """Admin panel for Ingredient model."""
-    list_display = (
-        'id',
-        'name',
-        'measurement_unit'
-    )
-    list_editable = (
-        'measurement_unit',
-    )
-    list_filter = (
-        'name',
-        'measurement_unit'
-    )
-    search_fields = (
-        'name',
-        'measurement_unit'
-    )
-
-
 class IngredientInline(admin.TabularInline):
     """Admin panel for Ingredient in Recipe model."""
     model = Ingredient_Recipe
+    extra = 1
+    min_num = 1
     list_display = (
         'recipe',
         'ingredient',
-        'quantity'
+        'amount'
     )
     list_editable = (
         'recipe',
         'ingredient',
-        'quantity'
+        'amount'
     )
     list_filter = (
         'recipe',
@@ -92,74 +73,35 @@ class IngredientInline(admin.TabularInline):
     search_fields = (
         'recipe',
         'ingredient',
-        'quantity'
+        'amount'
     )
 
 
 class TagInLine(admin.TabularInline):
     """Admin panel for Recipe Tags model."""
     model = Recipe_Tag
+    extra = 1
+    min_num = 1
     list_display = (
         'recipe',
         'tag',
-        'author',
         'reg_date'
     )
     list_editable = (
         'recipe',
         'tag',
-        'author',
         'reg_date'
     )
     list_filter = (
         'recipe',
         'tag',
-        'author',
         'reg_date'
     )
     search_fields = (
         'recipe',
         'tag',
-        'author',
         'reg_date'
     )
-
-
-@admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
-    """Admin panel for Recipe model."""
-    inlines = (IngredientInline, TagInLine)
-    list_display = (
-        'name',
-        'text',
-        'author',
-        'pub_date',
-        'production_time',
-        'favorite_count',
-    )
-    list_editable = (
-        'text',
-        'production_time',
-    )
-    list_filter = (
-        'name',
-        'author',
-        'pub_date',
-        'production_time',
-    )
-    search_fields = (
-        'name',
-        'author',
-        'pub_date',
-        'production_time',
-    )
-    readonly_fields = (
-        'favorite_count',
-    )
-
-    @admin.display(description='Favorites')
-    def favorite_count(self, obj):
-        return obj.favorites.count()
 
 
 @admin.register(Tag)
@@ -185,3 +127,89 @@ class TagAdmin(admin.ModelAdmin):
         'color',
         'slug'
     )
+
+
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    """Admin panel for Ingredient model."""
+    list_display = (
+        'id',
+        'name',
+        'measurement_unit'
+    )
+    list_editable = (
+        'measurement_unit',
+    )
+    list_filter = (
+        'name',
+        'measurement_unit'
+    )
+    search_fields = (
+        'name',
+        'measurement_unit'
+    )
+
+
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    """Admin panel for Recipe model."""
+    inlines = (IngredientInline, TagInLine)
+    list_display = (
+        'id',
+        'name',
+        'text',
+        'author',
+        'pub_date',
+        'cooking_time',
+        'favorite_count',
+        'image',
+        'get_ingredients',
+        'get_tags',
+    )
+    list_editable = (
+        'text',
+        'cooking_time',
+    )
+    list_filter = (
+        'name',
+        'author',
+        'pub_date',
+        'cooking_time',
+    )
+    search_fields = (
+        'name',
+        'author',
+        'pub_date',
+        'cooking_time',
+    )
+    readonly_fields = (
+        'favorite_count',
+    )
+
+    inlines = (
+        TagInLine,
+        IngredientInline,
+    )
+
+    @admin.display(description='Favorites')
+    def favorite_count(self, obj):
+        return obj.favorites.count()
+
+    def get_ingredients(self, obj):
+        queryset = Ingredient_Recipe.objects.filter(
+            recipe_id=obj.id
+        ).all()
+        return ', '.join(
+            [f' {item.ingredient.name} {item.amount} '
+             f'{item.ingredient.measurement_unit}'
+             for item in queryset]
+        )
+    
+    def get_tags(self, obj):
+        queryset = Recipe_Tag.objects.filter(
+            recipe_id=obj.id
+        ).all()
+        return ', '.join(
+            [f' {item.tag.name} \n'
+             for item in queryset]
+        )
