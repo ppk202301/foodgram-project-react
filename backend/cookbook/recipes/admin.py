@@ -18,9 +18,6 @@ class CartAdmin(admin.ModelAdmin):
         'user', 
         'recipe'
     )
-    list_editable = (
-        'recipe',
-    )
     list_filter = (
         'user',
         'recipe'
@@ -36,18 +33,15 @@ class FavoriteAdmin(admin.ModelAdmin):
     """Admin panel for Favotite model."""
     list_display = (
         'user', 
-        'recipe'
-    )
-    list_editable = (
         'recipe',
     )
     list_filter = (
         'user',
-        'recipe'
+        'recipe',
     )
     search_fields = (
         'user',
-        'recipe'
+        'recipe',
     )
 
 

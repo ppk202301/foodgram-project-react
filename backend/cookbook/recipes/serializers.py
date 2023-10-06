@@ -6,8 +6,8 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers
 
 from rest_framework.fields import CurrentUserDefault
+from rest_framework.validators import UniqueTogetherValidator
 
-from users.models import User
 from users.serializers import (
     UserSerializer
 )
@@ -178,18 +178,6 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         print(f'Debugging: work to_representation')
         print(f'Debugging: work to_representation self = {self}')
         print(f'Debugging: work to_representation instance = {instance}')
-
-        #print(f'Debugging: work to_representation instance keys = {instance.keys()}')
-
-        #tags = instance.get('tags')
-
-        #print(f'Debugging: work to_representation instance key tags = {tags}')
-
-        #print(f'Debugging: work to_representation instance key tags [0]= {tags[0]}')
-
-        #print(f'Debugging: work to_representation instance key tags [0] name= {tags[0].name}')
-        #print(f'Debugging: work to_representation instance key tags [0] color= {tags[0].color}')
-        #print(f'Debugging: work to_representation instance key tags [0] slug = {tags[0].slug}')
 
         serializer = RecipeSerializer(
             instance,
@@ -411,3 +399,39 @@ class RecipeUpdateSerializer(RecipeCreateSerializer):
         print(f'Debugging: validate end attr = {attrs}')
 
         return attrs
+
+
+class RecipeMainInfoSerializer(serializers.ModelSerializer):
+    """Serializer for main information about the recipe."""
+    class Meta:
+        model = Recipe
+        fields = (
+            'id',
+            'name',
+            'image',
+            'cooking_time',
+        )
+        read_only_fields = (
+            'name',
+            'image',
+            'cooking_time',
+        )
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    """Serializer for Favorite model."""
+    class Meta:
+        model = Favorite
+        fields = '__all__'
+        
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Favorite.objects.all(),                
+                message='This recipe is in user\'s. favorite list.',
+                fields=(
+                    'recipe',
+                    'user',
+                ),
+            )
+        ]
+

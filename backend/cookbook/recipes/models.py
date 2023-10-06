@@ -35,7 +35,10 @@ class Ingredient(models.Model):
         ordering = ['name']
 
     def __str__(self):
-        return f'Ingredient: {self.name}, unit: {self.unit}'
+        return (
+            f'Ingredient: {self.name}, '
+            f'unit: {self.measurement_unit}'
+        )
 
 
 class Tag(models.Model):
@@ -128,7 +131,10 @@ class Recipe(models.Model):
         ordering = ['-pub_date']
 
     def __str__(self):
-        return f'Recipe: {self.name}, author: {self.author}'
+        return (
+            f'Recipe: {self.id}. {self.name}, '
+            f'author: {self.author}'
+        )
 
 
 class Cart(models.Model):
@@ -224,10 +230,12 @@ class Ingredient_Recipe(models.Model):
         ]
 
     def __str__(self):
-        return (f'Recipe {self.recipe.name} has '
-                f'ingredient {self.ingredient.name} in '
-                f'amount {self.amount} of '
-                f'{self.ingredient.measurement_unit}')
+        return (
+            f'Recipe {self.recipe.name} has '
+            f'ingredient {self.ingredient.name} in '
+            f'amount {self.amount} of '
+            f'{self.ingredient.measurement_unit}'
+        )
 
 
 class Recipe_Tag(models.Model):
