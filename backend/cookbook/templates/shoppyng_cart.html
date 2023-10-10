@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+    </head>
+    <body>
+        <h4>Список покупок:</h4>
+        {% if ingredients %}
+            <ul>
+                {% for item in ingredients %}
+                    <li> {{ item.ingredient__name }}  {{ item.sum_amount }},  {{ item.ingredient__measurement_unit }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>There is no igredient to be bought.</p>
+        {% endif %}
+    </body>
+</html>

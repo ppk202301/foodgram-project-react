@@ -1,3 +1,12 @@
+import os
+
+from pathlib import Path
+
+from django.conf import settings
+from django.db.models import Sum
+from django.http import HttpResponse
+from django.template.loader import get_template
+
 from rest_framework import (
     serializers,
     status,
@@ -5,7 +14,6 @@ from rest_framework import (
 )
 from rest_framework.decorators import (
     action,
-    permission_classes,
 ) 
 from rest_framework.permissions import (
     AllowAny,
@@ -14,11 +22,13 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 
+from .convert_to_pdf import Html_to_Pdf
 from .filters import RecipeFilter
 from .models import (
     Cart,
     Favorite,
     Ingredient,
+    Ingredient_Recipe,
     Recipe,
     Tag,
 )
@@ -27,6 +37,7 @@ from .permissions import (
     IsAuthor,
 )
 from .serializers import (
+    CartSerializer,
     FavoriteSerializer,
     IngredientSerializer,
     RecipeSerializer,
@@ -35,6 +46,7 @@ from .serializers import (
     RecipeUpdateSerializer,
     TagSerializer,
 )
+
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """Tag Viewset"""
@@ -83,14 +95,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
         print(f'Debugging: work viewset get_permission self.request.method = {self.request.method}')
 
         if self.request.method == 'GET':
+            if self.action == 'download_shopping_cart':
+                print(f'Debugging: work viewset get_permission return IsAuthenticated')
+                return (
+                    IsAuthenticated(),
+                )
+
+            print(f'Debugging: work viewset get_permission return AllowAny')
             return (
                 AllowAny(),
             )
-        if (self.action == 'favorite'
-            or self.action == 'shopping_cart'):
+
+        if self.action in (
+            'favorite',
+            'shopping_cart',
+        ):
+            print(f'Debugging: work viewset get_permission return IsAuthenticated')
             return (
                 IsAuthenticated(),
             )
+
+        print(f'Debugging: work viewset get_permission return IsAuthenticated and IsAuthor')
         return (
             IsAuthenticated(),
             IsAuthor(),
@@ -108,7 +133,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(
         methods=[
             'post',
-            'delete'
+            'delete',
         ],
         detail=True,
     )
@@ -168,4 +193,127 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         print(f'Debugging: favorite serializer = {serializer}')
 
-        return  Response(serializer.data, status=status.HTTP_201_CREATED)
+        return  Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    @action(
+        methods=[
+            'post',
+            'delete',
+        ],
+        detail=True,
+    )
+    def shopping_cart(self, request, pk):
+        print(f'Debugging: start shopping_cart')
+        print(f'Debugging: start shopping_cart self = {self}')
+        print(f'Debugging: start shopping_cart request = {request}')
+        print(f'Debugging: start shopping_cart pk = {pk}')
+
+        user = self.request.user
+        recipe = self.get_object()
+
+        print(f'Debugging: shopping_cart user = {user}')
+        print(f'Debugging: shopping_cart recipe = {recipe}')
+
+        if request.method == 'DELETE':
+
+            print(f'Debugging: shopping_cart method == DELETE')
+
+            existing_cart_recipe = Cart.objects.filter(
+                recipe=recipe,
+                user=user,
+            )
+            if not existing_cart_recipe:
+                raise serializers.ValidationError(
+                    {
+                        'errors': [
+                            ('This recipe is not found in '
+                             'the user cart.')
+                        ]
+                    }
+                )
+
+            print(f'Debugging: shopping_cart method == instance  {existing_cart_recipe}')
+
+            existing_cart_recipe.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        print(f'Debugging: shopping_cart method == POST')
+
+        data = {
+            'recipe': pk,
+            'user': user.id,
+        }
+        new_cart_recipe = CartSerializer(
+            data=data,
+        )
+
+        print(f'Debugging: shopping_cart new_cart_recipe = {new_cart_recipe}')
+
+        new_cart_recipe.is_valid(
+            raise_exception=True,
+        )
+        new_cart_recipe.save()
+
+        serializer = RecipeMainInfoSerializer(recipe)
+
+        print(f'Debugging: shopping serializer = {serializer}')
+
+        return  Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+        )
+
+    @action(
+        methods=[
+            'get',
+        ],
+        detail=False,
+    )
+    def download_shopping_cart(self, request):
+        user = self.request.user
+
+        ingredients_to_buy = list(
+            Ingredient_Recipe.objects.filter(
+                recipe__carts__user=user
+            )
+            .values(
+                'ingredient__id',
+                'ingredient__name',
+                'ingredient__measurement_unit',
+            )
+            .annotate(sum_amount=Sum('amount'))
+            .order_by('ingredient__id')
+        )
+
+        html = (
+            get_template('shoppyng_cart.html')
+            .render(
+                {'ingredients': ingredients_to_buy}
+            )
+        )
+
+        pdf3 = Html_to_Pdf()
+        pdf3.add_font(
+            'DejaVu',
+            '',
+            os.path.normpath(
+                str(settings.STATIC_ROOT)
+                + '\\fonts\\DejaVuSansCondensed.ttf'
+            ),
+        )
+        pdf3.set_font(
+            'DejaVu',
+            '',
+            10
+        )
+        pdf3.add_page()
+        pdf3.write_html(html)
+
+        return HttpResponse(
+                bytes(pdf3.output()),
+                content_type='application/pdf',
+                status=status.HTTP_200_OK
+            )

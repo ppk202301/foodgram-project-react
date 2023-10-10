@@ -116,6 +116,7 @@ class Recipe(models.Model):
         Ingredient,
         through='Ingredient_Recipe',
         verbose_name='Recipe ingregiemts',
+        related_name='recipes',
         help_text='Add all components to your dish.'
     )
     tags = models.ManyToManyField(
@@ -231,7 +232,7 @@ class Ingredient_Recipe(models.Model):
 
     def __str__(self):
         return (
-            f'Recipe {self.recipe.name} has '
+            f'Recipe {self.recipe.id}, {self.recipe.name} has '
             f'ingredient {self.ingredient.name} in '
             f'amount {self.amount} of '
             f'{self.ingredient.measurement_unit}'

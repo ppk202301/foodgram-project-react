@@ -427,7 +427,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
         validators = [
             UniqueTogetherValidator(
                 queryset=Favorite.objects.all(),                
-                message='This recipe is in user\'s. favorite list.',
+                message='This recipe is in user\'s. favorite list already.',
                 fields=(
                     'recipe',
                     'user',
@@ -435,3 +435,20 @@ class FavoriteSerializer(serializers.ModelSerializer):
             )
         ]
 
+
+class CartSerializer(serializers.ModelSerializer):
+    """Serializer for Cart model."""
+    class Meta:
+        model = Cart
+        fields = '__all__'
+        
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Cart.objects.all(),                
+                message='This recipe is in user\'s. cart list already.',
+                fields=(
+                    'recipe',
+                    'user',
+                ),
+            )
+        ]
