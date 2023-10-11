@@ -30,6 +30,13 @@ class RecipeFilter(filters.FilterSet):
 
     def filter_items_for_user(self, queryset, name, value):
         user = self.request.user
+
+        print(f'Debugging: recipes filtering user = {user}')
+        print(f'Debugging: recipes filtering self = {self}')
+        print(f'Debugging: recipes filtering queryset = {queryset}')
+        print(f'Debugging: recipes filtering name = {name}')
+        print(f'Debugging: recipes filtering value = {value}')
+
         if user.is_anonymous or not int(value):
             return queryset
         return queryset.filter(**{name: user})

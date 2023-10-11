@@ -10,7 +10,10 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 
-from .models import User
+from .models import (
+    Follow,
+    User,
+)
 from .serializers import (
     FollowCreateSerializer,
     FollowSaveNewSerializer,
@@ -88,15 +91,18 @@ class UserViewSet(UserViewSet):
     def subscriptions(self, request):
         user = self.request.user
 
+        print(f'Debugging: user from self.request = {user}')
+        print(f'Debugging: request = {request}')
+
         def queryset():
             return User.objects.filter(
                 id__in=list(
-                    user.following.all().values_list(
-                        'user_id',
+                    user.follower.all().values_list(
+                        'following_id',
                         flat=True
                     )
                 )
-        )
+            )
 
         self.get_queryset = queryset
 
