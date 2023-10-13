@@ -132,3 +132,7 @@ dmypy.json
 .idea
 
 media/
+
+backend/cookbook/collected_static/admin/
+backend/cookbook/collected_static/colorfield/
+backend/cookbook/collected_static/rest_framework/
