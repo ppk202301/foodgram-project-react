@@ -1,3 +1,4 @@
+import ntpath
 import os
 
 from pathlib import Path
@@ -295,14 +296,27 @@ class RecipeViewSet(viewsets.ModelViewSet):
             )
         )
 
+        font_path = '/fonts/DejaVuSansCondensed.ttf'
+
+        print(f'Debugging: shopping font_path = {font_path}')
+        print(f'Debugging: shopping font_path = {font_path}')
+
+        font_path.replace(os.sep,ntpath.sep)
+
+        print(f'Debugging: shopping after OS replace font_path = {font_path}')
+
+        font_path_final = os.path.normpath(
+                str(settings.STATIC_ROOT)
+                + font_path
+        )
+
+        print(f'Debugging: shopping font_path_final = {font_path_final}')
+
         pdf3 = Html_to_Pdf()
         pdf3.add_font(
             'DejaVu',
             '',
-            os.path.normpath(
-                str(settings.STATIC_ROOT)
-                + '\\fonts\\DejaVuSansCondensed.ttf'
-            ),
+            font_path_final,
         )
         pdf3.set_font(
             'DejaVu',

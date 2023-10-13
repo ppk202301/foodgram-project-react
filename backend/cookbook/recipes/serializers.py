@@ -149,20 +149,20 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         many=True,
     )
 
-    print(f'Debugging: tags = {tags}')
+    #print(f'Debugging: tags = {tags}')
 
     author = UserSerializer(
         default=CurrentUserDefault()
     )
 
-    print(f'Debugging: author = {author}')
+    #print(f'Debugging: author = {author}')
 
     ingredients = Ingredient_RecipeSaveSerializer(
         many=True,
         source='Ingredient_Recipe',
     )
 
-    print(f'Debugging: ingredients = {ingredients}')
+    #print(f'Debugging: ingredients = {ingredients}')
 
     image = Base64ImageField()
 

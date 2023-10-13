@@ -29,10 +29,16 @@ load_dotenv(override=True)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_token')
 
+print(f'Debugging: SECRET_KEY = {SECRET_KEY}')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
+print(f'Debugging: DEBUG = {DEBUG}')
+
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1, localhost').split(', ')
+
+print(f'Debugging: ALLOWED_HOSTS = {ALLOWED_HOSTS}')
 
 # Application definition
 
@@ -47,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'djoser',
+    'core.apps.CoreConfig',
     'colorfield',
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
@@ -178,3 +185,5 @@ DJOSER = {
       'user_create': 'users.serializers.UserCreationSerializer',
    },
 }
+
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
