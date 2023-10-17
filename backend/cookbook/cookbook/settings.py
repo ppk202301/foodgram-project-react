@@ -147,7 +147,11 @@ STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'collected_static'
 
 MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media/'
+
+if DEBUG:
+    MEDIA_ROOT = BASE_DIR / 'media/'
+else:
+    MEDIA_ROOT = '/media/'
 
 print(f'Debugging: STATIC_ROOT = {STATIC_ROOT}')
 print(f'Debugging: MEDIA_ROOT  = {MEDIA_ROOT}')

@@ -40,6 +40,9 @@ class TagSerializer(serializers.ModelSerializer):
 
 class IngredientSerializer(serializers.ModelSerializer):
     """Serilizer for Ingredient model."""
+
+    print(f'Debugging: work IngredientSerializer')
+
     class Meta:
         model = Ingredient
         fields = (
@@ -49,12 +52,27 @@ class IngredientSerializer(serializers.ModelSerializer):
         )
 
 
-class IngredientInRecipeSerializer(serializers.Serializer):
+class IngredientInRecipeSerializer(serializers.ModelSerializer):
     """Serializer for ingredients in the Recipe."""
-    id = serializers.IntegerField()
-    amount = serializers.IntegerField(
-        min_value=0.001
+
+    id = serializers.ReadOnlyField(
+        source='ingredient.id',
     )
+    name = serializers.ReadOnlyField(
+        source='ingredient.name',
+    )
+    measurement_unit = serializers.ReadOnlyField(
+        source='ingredient.measurement_unit',
+    )
+
+    class Meta:
+        model = Ingredient_Recipe
+        fields = (
+            'id',
+            'name',
+            'measurement_unit',
+            'amount',
+        )
 
 
 class Base64ImageField(serializers.ImageField):
@@ -65,7 +83,7 @@ class Base64ImageField(serializers.ImageField):
             ext = format.split('/')[-1]
             data = ContentFile(
                 base64.b64decode(imgstr),
-                name='temp.' + ext
+                name='temp.' + ext,
             )
 
         return super().to_internal_value(data)
@@ -90,13 +108,16 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = UserSerializer(
         default=CurrentUserDefault()
     )
-    ingredients = IngredientSerializer(
+    ingredients = IngredientInRecipeSerializer(
+    #ingredients = IngredientSerializer(
         many=True,
         read_only=True,
+        #2023-10-17
+        source='recipes',
     )
     is_favorited = serializers.SerializerMethodField(
         read_only=True
-        )
+    )
     is_in_shopping_cart = serializers.SerializerMethodField(
         read_only=True
     )

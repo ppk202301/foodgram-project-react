@@ -52,6 +52,7 @@ from .serializers import (
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """Tag Viewset"""
     serializer_class = TagSerializer
+    pagination_class = None
     permission_classes = (
         AllowAny,
     )
@@ -61,6 +62,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """Ingredient Viewset"""
     serializer_class = IngredientSerializer
+    pagination_class = None
     permission_classes = (
         AllowAny,
     )

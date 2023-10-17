@@ -1,5 +1,11 @@
 FROM python:3.9
 
+WORKDIR /media
+WORKDIR /static_backend
+WORKDIR /data
+
+ADD /data  /data
+
 WORKDIR /app
 
 COPY requirements.txt .
