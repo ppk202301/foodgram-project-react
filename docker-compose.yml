@@ -1,0 +1,87 @@
+version: '3'
+
+volumes:
+  db_data:
+    name: db_data
+    external: false
+  static:
+    name: static
+    external: false
+  media:
+    name: media
+    external: false
+
+networks:
+  foodgram-network:
+    name: foodgram-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+          ip_range: 172.28.5.0/24
+          gateway: 172.28.5.254
+
+services:
+  postgres:
+    container_name: postgres
+    hostname: db
+    build: ./database
+    image: postgres:13.10
+    env_file: .env
+    networks:
+      foodgram-network:
+        ipv4_address: 172.28.5.4
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  foodgram-frontend:
+    container_name: foodgram-frontend
+    hostname: foodgram-frontend
+    build: ./frontend
+    image: foodgram-frontend
+    networks:
+      foodgram-network:
+        ipv4_address: 172.28.5.5
+    volumes:
+      - static:/app/result_build/build
+    ports:
+      - "3000:3000"
+
+  foodgram-backend:
+    container_name: foodgram-backend
+    hostname: foodgram-backend
+    extra_hosts:
+      gateway: 172.28.5.3
+    build: ./backend
+    image: foodgram-backend
+    networks:
+      foodgram-network:
+        ipv4_address: 172.28.5.2
+    volumes:
+      - static:/static_backend
+      - media:/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+
+  gateway:
+    container_name: gateway
+    hostname: gateway
+    extra_hosts:
+      foodgram-backend: 172.28.5.2
+    build: ./gateway
+    image: gateway
+    networks:
+      foodgram-network:
+        ipv4_address: 172.28.5.3
+    volumes:
+      - static:/static
+      - media:/media
+    ports:
+      - "80:80"
+    depends_on:
+      - foodgram-frontend
+      - foodgram-backend
