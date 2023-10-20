@@ -4,9 +4,9 @@ from .models import (
     Cart,
     Favorite,
     Ingredient,
-    Ingredient_Recipe,
+    IngredientRecipe,
     Recipe,
-    Recipe_Tag,
+    RecipeTag,
     Tag
 )
 
@@ -47,7 +47,7 @@ class FavoriteAdmin(admin.ModelAdmin):
 
 class IngredientInline(admin.TabularInline):
     """Admin panel for Ingredient in Recipe model."""
-    model = Ingredient_Recipe
+    model = IngredientRecipe
     extra = 1
     min_num = 1
     list_display = (
@@ -73,7 +73,7 @@ class IngredientInline(admin.TabularInline):
 
 class TagInLine(admin.TabularInline):
     """Admin panel for Recipe Tags model."""
-    model = Recipe_Tag
+    model = RecipeTag
     extra = 1
     min_num = 1
     list_display = (
@@ -190,7 +190,7 @@ class RecipeAdmin(admin.ModelAdmin):
         return obj.favorites.count()
 
     def get_ingredients(self, obj):
-        queryset = Ingredient_Recipe.objects.filter(
+        queryset = IngredientRecipe.objects.filter(
             recipe_id=obj.id
         ).all()
         return ', '.join(
@@ -200,7 +200,7 @@ class RecipeAdmin(admin.ModelAdmin):
         )
 
     def get_tags(self, obj):
-        queryset = Recipe_Tag.objects.filter(
+        queryset = RecipeTag.objects.filter(
             recipe_id=obj.id
         ).all()
         return ', '.join(

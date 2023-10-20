@@ -20,13 +20,13 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 
-from .convert_to_pdf import Html_to_Pdf
+from .convert_to_pdf import HtmlToPdf
 from .filters import RecipeFilter
 from .models import (
     Cart,
     Favorite,
     Ingredient,
-    Ingredient_Recipe,
+    IngredientRecipe,
     Recipe,
     Tag,
 )
@@ -216,7 +216,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         user = self.request.user
 
         ingredients_to_buy = list(
-            Ingredient_Recipe.objects.filter(
+            IngredientRecipe.objects.filter(
                 recipe__carts__user=user
             )
             .values(
@@ -245,7 +245,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             + font_path
         )
 
-        pdf3 = Html_to_Pdf()
+        pdf3 = HtmlToPdf()
         pdf3.add_font(
             'DejaVu',
             '',

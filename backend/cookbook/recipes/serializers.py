@@ -16,7 +16,7 @@ from .models import (
     Cart,
     Favorite,
     Ingredient,
-    Ingredient_Recipe,
+    IngredientRecipe,
     MIN_AMOUNT,
     Recipe,
     Tag,
@@ -59,7 +59,7 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Ingredient_Recipe
+        model = IngredientRecipe
         fields = (
             'id',
             'name',
@@ -82,7 +82,7 @@ class Base64ImageField(serializers.ImageField):
         return super().to_internal_value(data)
 
 
-class Ingredient_RecipeSaveSerializer(serializers.Serializer):
+class IngredientRecipeSaveSerializer(serializers.Serializer):
     """Serializer for ingredients of the recipe."""
     id = serializers.IntegerField()
     amount = serializers.IntegerField(
@@ -146,7 +146,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     author = UserSerializer(
         default=CurrentUserDefault()
     )
-    ingredients = Ingredient_RecipeSaveSerializer(
+    ingredients = IngredientRecipeSaveSerializer(
         many=True,
         source='Ingredient_Recipe',
     )
@@ -229,14 +229,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
         for ingredient in ingredients:
             data.append(
-                Ingredient_Recipe(
+                IngredientRecipe(
                     recipe=recipe,
                     amount=ingredient['amount'],
                     ingredient_id=ingredient['id'],
                 )
             )
 
-        Ingredient_Recipe.objects.bulk_create(data)
+        IngredientRecipe.objects.bulk_create(data)
 
     def create(self, validated_data):
         """Create new recipe."""

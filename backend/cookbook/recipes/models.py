@@ -194,7 +194,7 @@ class Favorite(models.Model):
         ]
 
 
-class Ingredient_Recipe(models.Model):
+class IngredientRecipe(models.Model):
     """Ingredient in Recipe model."""
     ingredient = models.ForeignKey(
         Ingredient,
@@ -239,7 +239,7 @@ class Ingredient_Recipe(models.Model):
         )
 
 
-class Recipe_Tag(models.Model):
+class RecipeTag(models.Model):
     """Tags of Recipe model."""
     recipe = models.ForeignKey(
         Recipe,
