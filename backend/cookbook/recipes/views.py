@@ -74,11 +74,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
+        serializer = None
         if self.request.method == 'GET':
-            return RecipeSerializer
+            serializer = RecipeSerializer
         elif self.request.method == 'PATCH':
-            return RecipeUpdateSerializer
-        return RecipeCreateSerializer
+            serializer = RecipeUpdateSerializer
+        else:
+            serializer = RecipeCreateSerializer
+        return serializer
 
     def get_permissions(self):
         if self.request.method == 'GET':
