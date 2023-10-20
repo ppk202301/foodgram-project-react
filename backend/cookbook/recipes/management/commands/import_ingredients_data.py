@@ -14,7 +14,7 @@ DATA_PATH = os.path.join(
     'data'
 )
 INGREDIENTS_DATA = os.path.join(
-    DATA_PATH, 
+    DATA_PATH,
     'ingredients.json'
 )
 
@@ -44,7 +44,7 @@ class Command(BaseCommand):
 
         for item in ingredients:
             try:
-                Ingredient.objects.get_or_create(**item)                
+                Ingredient.objects.get_or_create(**item)
             except Exception as error:
                 print(
                     f"Try to add ingredient {item['name']} to Database.\n"

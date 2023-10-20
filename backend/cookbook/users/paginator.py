@@ -11,6 +11,7 @@ class FollowCustomPaginator(UsersCustomPaginator):
     """Custom paginator for Follow model."""
     pass
 
+
 class UserCustomPaginator(UsersCustomPaginator):
     """Custom paginator for User model."""
     pass

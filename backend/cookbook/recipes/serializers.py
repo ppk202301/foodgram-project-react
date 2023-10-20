@@ -1,6 +1,6 @@
 import base64
 
-from django.contrib.auth.models import  AnonymousUser
+from django.contrib.auth.models import AnonymousUser
 from django.core.files.base import ContentFile
 
 from rest_framework import serializers
@@ -25,9 +25,6 @@ from .models import (
 
 class TagSerializer(serializers.ModelSerializer):
     """Serilizer for Tag model."""
-    
-    print(f'Debugging: work TagSerializer')
-
     class Meta:
         model = Tag
         fields = (
@@ -40,9 +37,6 @@ class TagSerializer(serializers.ModelSerializer):
 
 class IngredientSerializer(serializers.ModelSerializer):
     """Serilizer for Ingredient model."""
-
-    print(f'Debugging: work IngredientSerializer')
-
     class Meta:
         model = Ingredient
         fields = (
@@ -54,7 +48,6 @@ class IngredientSerializer(serializers.ModelSerializer):
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
     """Serializer for ingredients in the Recipe."""
-
     id = serializers.ReadOnlyField(
         source='ingredient.id',
     )
@@ -99,9 +92,6 @@ class Ingredient_RecipeSaveSerializer(serializers.Serializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Serializer for Recipe model."""
-
-    print(f'Debugging: work RecipeSerializer')
-
     tags = TagSerializer(
         many=True
     )
@@ -109,10 +99,8 @@ class RecipeSerializer(serializers.ModelSerializer):
         default=CurrentUserDefault()
     )
     ingredients = IngredientInRecipeSerializer(
-    #ingredients = IngredientSerializer(
         many=True,
         read_only=True,
-        #2023-10-17
         source='recipes',
     )
     is_favorited = serializers.SerializerMethodField(
@@ -128,13 +116,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         exclude = ('pub_date',)
 
     def get_is_favorited(self, obj):
-
-        print(f'Debugging: work get_is_favorited')
-        print(f'Debugging: work get_is_favorited self = {self}')
-        print(f'Debugging: work get_is_favorited obj = {obj}')
-
-        user=self.context['request'].user
-        print(f'Debugging: work get_is_favorited user = {user}')
+        user = self.context['request'].user
 
         if isinstance(user, AnonymousUser):
             return False
@@ -145,12 +127,7 @@ class RecipeSerializer(serializers.ModelSerializer):
         ).exists()
 
     def get_is_in_shopping_cart(self, obj):
-
-        print(f'Debugging: work get_is_in_shopping_cart')
-        #print(f'Debugging: work get_is_in_shopping_cart self = {self}')
-        user=self.context['request'].user
-        print(f'Debugging: work get_is_in_shopping_cart user = {user}')
-
+        user = self.context['request'].user
         if isinstance(user, AnonymousUser):
             return False
 
@@ -162,29 +139,17 @@ class RecipeSerializer(serializers.ModelSerializer):
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Serializer for new recipe creation."""
-
-    print(f'Debugging: work RecipeCreateSerializer')
-
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
         many=True,
     )
-
-    #print(f'Debugging: tags = {tags}')
-
     author = UserSerializer(
         default=CurrentUserDefault()
     )
-
-    #print(f'Debugging: author = {author}')
-
     ingredients = Ingredient_RecipeSaveSerializer(
         many=True,
         source='Ingredient_Recipe',
     )
-
-    #print(f'Debugging: ingredients = {ingredients}')
-
     image = Base64ImageField()
 
     class Meta:
@@ -195,30 +160,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         )
 
     def to_representation(self, instance):
-
-        print(f'Debugging: work to_representation')
-        print(f'Debugging: work to_representation self = {self}')
-        print(f'Debugging: work to_representation instance = {instance}')
-
         serializer = RecipeSerializer(
             instance,
             context={
                 'request': self.context.get('request')
             }
         )
-
-        print(f'Debugging: work to_representation serializer = {serializer}')
-        print(f'Debugging: work to_representation serializer.data = {serializer.data}')
-
         return serializer.data
 
     def validate(self, attrs):
         """Data validation."""
-
-        print(f'Debugging: work validate')
-        print(f'Debugging: validate self = {self}')
-        print(f'Debugging: validate begining attr = {attrs}')
-
         ingredients = self.initial_data.get(
             'ingredients'
         )
@@ -246,7 +197,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Tags should be unique in the request.'
             )
-    
+
         text = self.initial_data.get(
             'text'
         )
@@ -267,26 +218,16 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 'No cooking_time value is found.'
             )
 
-        print(f'Debugging: validate end attr = {attrs}')
-
         return attrs
 
     def _add_ingredients_list(self, recipe, ingredients):
         """Add list of ingredients."""
-
-        print(f'Debugging: _add_ingredients_list')
-        print(f'Debugging: _add_ingredients_list self = {self}')
-        print(f'Debugging: _add_ingredients_list recipe = {recipe}')
-        print(f'Debugging: _add_ingredients_list ingredients = {ingredients}')
-
         if ingredients is None:
-            print(f'Debugging: _add_ingredients_list Ingredients are not found')
             return
 
         data = []
 
         for ingredient in ingredients:
-            print(f'Debugging: _add_ingredients_list ingredient = {ingredient}')
             data.append(
                 Ingredient_Recipe(
                     recipe=recipe,
@@ -295,67 +236,39 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
                 )
             )
 
-        print(f'Debugging: _add_ingredients_list data = {data}')
-
         Ingredient_Recipe.objects.bulk_create(data)
 
     def create(self, validated_data):
         """Create new recipe."""
-
-        print(f'Debugging: work serializer create')
-        print(f'Debugging: validated_data = {validated_data}')
-
         tags = validated_data.pop(
             'tags'
         )
-
-        print(f'Debugging: tags = {tags}')
-
         ingredients = validated_data.pop(
             'Ingredient_Recipe'
         )
-
-        print(f'Debugging: ingredients = {ingredients}')
-
-        print(f'Debugging serializer create: validated_data = {validated_data}')
-
         recipe = Recipe.objects.create(
             **validated_data
         )
 
-        print(f'Debugging: recipe before tags = {recipe}')
-
         for tag in tags:
             recipe.tags.add(tag)
-
-        print(f'Debugging: recipe after tags = {recipe}')
 
         self._add_ingredients_list(
             recipe,
             ingredients
         )
 
-        print(f'Debugging: recipe after _add_ingredients_list = {recipe}')
-
         return recipe
 
- 
+
 class RecipeUpdateSerializer(RecipeCreateSerializer):
     """Serializer for recipe update."""
     def update(self, instance, validated_data):
         """Update the recipe."""
-
-        print(f'Debugging: work RecipeUpdateSerializer')
-
-        print(f'Debugging: work RecipeUpdateSerializer self = {self}')
-        print(f'Debugging: work RecipeUpdateSerializer instance = {instance}')
-        print(f'Debugging: work RecipeUpdateSerializer validated_date = {validated_data}')
-
         if 'tags' in validated_data:
             instance.tags.set(
                 validated_data.pop('tags')
             )
-
         if 'Ingredient_Recipe' in validated_data:
             ingredients = validated_data.pop(
                 'Ingredient_Recipe'
@@ -370,7 +283,7 @@ class RecipeUpdateSerializer(RecipeCreateSerializer):
         instance.image = validated_data.get(
             'image',
             instance.image
-        )        
+        )
         instance.text = validated_data.get(
             'text',
             instance.text
@@ -392,16 +305,11 @@ class RecipeUpdateSerializer(RecipeCreateSerializer):
 
     def validate(self, attrs):
         """Data validation."""
-
-        print(f'Debugging: work validate')
-        print(f'Debugging: validate self = {self}')
-        print(f'Debugging: validate begining attr = {attrs}')
-
         ingredients = self.initial_data.get('ingredients')
         tags = self.initial_data.get('tags')
-        
+
         ingredients_list = []
-        
+
         if ingredients:
             for ingredient in ingredients:
                 ingredients_list.append(
@@ -416,8 +324,6 @@ class RecipeUpdateSerializer(RecipeCreateSerializer):
                 raise serializers.ValidationError(
                     'Tags should be unique in the request.'
                 )
-
-        print(f'Debugging: validate end attr = {attrs}')
 
         return attrs
 
@@ -444,10 +350,10 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = '__all__'
-        
+
         validators = [
             UniqueTogetherValidator(
-                queryset=Favorite.objects.all(),                
+                queryset=Favorite.objects.all(),
                 message='This recipe is in user\'s. favorite list already.',
                 fields=(
                     'recipe',
@@ -462,10 +368,9 @@ class CartSerializer(serializers.ModelSerializer):
     class Meta:
         model = Cart
         fields = '__all__'
-        
         validators = [
             UniqueTogetherValidator(
-                queryset=Cart.objects.all(),                
+                queryset=Cart.objects.all(),
                 message='This recipe is in user\'s. cart list already.',
                 fields=(
                     'recipe',

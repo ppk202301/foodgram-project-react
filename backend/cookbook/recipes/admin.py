@@ -15,7 +15,7 @@ from .models import (
 class CartAdmin(admin.ModelAdmin):
     """Admin panel for Cart model."""
     list_display = (
-        'user', 
+        'user',
         'recipe'
     )
     list_filter = (
@@ -32,7 +32,7 @@ class CartAdmin(admin.ModelAdmin):
 class FavoriteAdmin(admin.ModelAdmin):
     """Admin panel for Favotite model."""
     list_display = (
-        'user', 
+        'user',
         'recipe',
     )
     list_filter = (
@@ -198,7 +198,7 @@ class RecipeAdmin(admin.ModelAdmin):
              f'{item.ingredient.measurement_unit}'
              for item in queryset]
         )
-    
+
     def get_tags(self, obj):
         queryset = Recipe_Tag.objects.filter(
             recipe_id=obj.id

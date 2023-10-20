@@ -11,7 +11,6 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 
 from .models import (
-    Follow,
     User,
 )
 from .serializers import (
@@ -35,9 +34,9 @@ class UserViewSet(UserViewSet):
         methods=[
             'delete',
             'post',
-        ], 
+        ],
         serializer_class=FollowSaveNewSerializer,
-        permission_classes = (
+        permission_classes=(
             IsAuthenticated,
         ),
         detail=True,
@@ -78,12 +77,12 @@ class UserViewSet(UserViewSet):
             serializer.data,
             status=status.HTTP_201_CREATED,
         )
-    
+
     @action(
         methods=['get'],
         serializer_class=FollowSerializer,
-        pagination_class = FollowCustomPaginator,
-        permission_classes = (
+        pagination_class=FollowCustomPaginator,
+        permission_classes=(
             IsAuthenticated,
         ),
         detail=False,

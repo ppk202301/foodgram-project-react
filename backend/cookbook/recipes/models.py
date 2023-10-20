@@ -96,7 +96,7 @@ class Recipe(models.Model):
         help_text='Estimate approximate production time in minutes (min 5).',
         validators=[
             MinValueValidator(
-                5, 
+                5,
                 'Production time should be more than 5 min.'
             )
         ]
@@ -270,7 +270,8 @@ class Recipe_Tag(models.Model):
         ordering = ['-reg_date']
 
     def __str__(self):
-        return (f'Recipe {self.recipe.name} has '
-                f'tag {self.tag.name} '
-                f'added on {self.reg_date}'
-            )
+        return (
+            f'Recipe {self.recipe.name} has '
+            f'tag {self.tag.name} '
+            f'added on {self.reg_date}'
+        )

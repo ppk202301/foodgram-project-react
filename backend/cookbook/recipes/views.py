@@ -1,8 +1,6 @@
 import ntpath
 import os
 
-from pathlib import Path
-
 from django.conf import settings
 from django.db.models import Sum
 from django.http import HttpResponse
@@ -15,11 +13,10 @@ from rest_framework import (
 )
 from rest_framework.decorators import (
     action,
-) 
+)
 from rest_framework.permissions import (
     AllowAny,
     IsAuthenticated,
-    SAFE_METHODS,
 )
 from rest_framework.response import Response
 
@@ -71,18 +68,12 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     """Recipe Viewset"""
-
-    print(f'Debugging: work RecipeViewSet')
-
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     pagination_class = RecipeCustomPaginator
     filterset_class = RecipeFilter
 
     def get_serializer_class(self):
-
-        print(f'Debugging: work viewset get_serializer_class')
-
         if self.request.method == 'GET':
             return RecipeSerializer
         elif self.request.method == 'PATCH':
@@ -90,21 +81,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         return RecipeCreateSerializer
 
     def get_permissions(self):
-
-        print(f'Debugging: work viewset get_permission')
-        print(f'Debugging: work viewset get_permission self.request.data = {self.request.data}')
-        print(f'Debugging: work viewset get_permission self.request.query_params = {self.request.query_params}')
-        print(f'Debugging: work viewset get_permission self.action = {self.action}')
-        print(f'Debugging: work viewset get_permission self.request.method = {self.request.method}')
-
         if self.request.method == 'GET':
             if self.action == 'download_shopping_cart':
-                print(f'Debugging: work viewset get_permission return IsAuthenticated')
                 return (
                     IsAuthenticated(),
                 )
-
-            print(f'Debugging: work viewset get_permission return AllowAny')
             return (
                 AllowAny(),
             )
@@ -113,24 +94,17 @@ class RecipeViewSet(viewsets.ModelViewSet):
             'favorite',
             'shopping_cart',
         ):
-            print(f'Debugging: work viewset get_permission return IsAuthenticated')
             return (
                 IsAuthenticated(),
             )
-
-        print(f'Debugging: work viewset get_permission return IsAuthenticated and IsAuthor')
         return (
             IsAuthenticated(),
             IsAuthor(),
         )
 
     def perform_create(self, serializer):
-
-        print(f'Debugging: perform_create')
-        print(f'Debugging: perform_create serializer = {serializer}')
-
         serializer.save(
-           author=self.request.user
+            author=self.request.user
         )
 
     @action(
@@ -141,20 +115,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
     )
     def favorite(self, request, pk):
-        print(f'Debugging: start favorite')
-        print(f'Debugging: start favorite self = {self}')
-        print(f'Debugging: start favorite request = {request}')
-        print(f'Debugging: start favorite pk = {pk}')
-
         user = self.request.user
         recipe = self.get_object()
 
-        print(f'Debugging: favorite user = {user}')
-        print(f'Debugging: favorite recipe = {recipe}')
-
         if request.method == 'DELETE':
-
-            print(f'Debugging: favorite method == DELETE')
 
             existing_fav_recipe = Favorite.objects.filter(
                 recipe=recipe,
@@ -170,12 +134,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     }
                 )
 
-            print(f'Debugging: favorite method == instance  {existing_fav_recipe}')
-
             existing_fav_recipe.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-        print(f'Debugging: favorite method == POST')
 
         data = {
             'recipe': pk,
@@ -185,8 +145,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             data=data,
         )
 
-        print(f'Debugging: favorite new_favorite_recipe = {new_favorite_recipe}')
-
         new_favorite_recipe.is_valid(
             raise_exception=True,
         )
@@ -194,9 +152,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         serializer = RecipeMainInfoSerializer(recipe)
 
-        print(f'Debugging: favorite serializer = {serializer}')
-
-        return  Response(
+        return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
         )
@@ -209,21 +165,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
         detail=True,
     )
     def shopping_cart(self, request, pk):
-        print(f'Debugging: start shopping_cart')
-        print(f'Debugging: start shopping_cart self = {self}')
-        print(f'Debugging: start shopping_cart request = {request}')
-        print(f'Debugging: start shopping_cart pk = {pk}')
-
         user = self.request.user
         recipe = self.get_object()
 
-        print(f'Debugging: shopping_cart user = {user}')
-        print(f'Debugging: shopping_cart recipe = {recipe}')
-
         if request.method == 'DELETE':
-
-            print(f'Debugging: shopping_cart method == DELETE')
-
             existing_cart_recipe = Cart.objects.filter(
                 recipe=recipe,
                 user=user,
@@ -238,12 +183,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
                     }
                 )
 
-            print(f'Debugging: shopping_cart method == instance  {existing_cart_recipe}')
-
             existing_cart_recipe.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-
-        print(f'Debugging: shopping_cart method == POST')
 
         data = {
             'recipe': pk,
@@ -253,8 +194,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             data=data,
         )
 
-        print(f'Debugging: shopping_cart new_cart_recipe = {new_cart_recipe}')
-
         new_cart_recipe.is_valid(
             raise_exception=True,
         )
@@ -262,9 +201,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
         serializer = RecipeMainInfoSerializer(recipe)
 
-        print(f'Debugging: shopping serializer = {serializer}')
-
-        return  Response(
+        return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
         )
@@ -299,20 +236,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         )
 
         font_path = '/fonts/DejaVuSansCondensed.ttf'
-
-        print(f'Debugging: shopping font_path = {font_path}')
-        print(f'Debugging: shopping font_path = {font_path}')
-
-        font_path.replace(os.sep,ntpath.sep)
-
-        print(f'Debugging: shopping after OS replace font_path = {font_path}')
-
-        font_path_final = os.path.normpath(
-                str(settings.STATIC_ROOT)
-                + font_path
+        font_path.replace(
+            os.sep,
+            ntpath.sep
         )
-
-        print(f'Debugging: shopping font_path_final = {font_path_final}')
+        font_path_final = os.path.normpath(
+            str(settings.STATIC_ROOT)
+            + font_path
+        )
 
         pdf3 = Html_to_Pdf()
         pdf3.add_font(
@@ -329,7 +260,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         pdf3.write_html(html)
 
         return HttpResponse(
-                bytes(pdf3.output()),
-                content_type='application/pdf',
-                status=status.HTTP_200_OK
-            )
+            bytes(pdf3.output()),
+            content_type='application/pdf',
+            status=status.HTTP_200_OK
+        )

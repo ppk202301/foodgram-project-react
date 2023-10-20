@@ -20,7 +20,7 @@ class RecipeInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = (
-            'name', 
+            'name',
             'text',
             'author',
         )
@@ -109,6 +109,7 @@ class FollowSaveNewSerializer(FollowSerializer):
     def get_is_subscribed(self, data):
         return True
 
+
 class FollowCreateSerializer(serializers.ModelSerializer):
     """Serializer for Follow creation."""
     class Meta:
@@ -123,7 +124,7 @@ class FollowCreateSerializer(serializers.ModelSerializer):
                 queryset=Follow.objects.all(),
                 fields=(
                     'following',
-                    'user',  
+                    'user',
                 ),
                 message='There is your subscription to this user.'
             )
