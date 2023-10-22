@@ -75,7 +75,8 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker-compose stop
+            cd foodgram/
+            sudo docker-compose -f docker-compose.production.yml stop
             sudo docker system prune
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
@@ -88,5 +89,12 @@ jobs:
             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-
+            sudo docker-compose -f docker-compose.production.yml up -d
+            sudo docker-compose exec -T foodgram-backend python manage.py makemigrations
+            sudo docker-compose exec -T foodgram-backend python manage.py migrate
+            sudo docker-compose exec -T foodgram-backend python manage.py collectstatic
+            cd collected_static/
+            cp -r .  /static_backend/
+            cd ..
+            sudo docker-compose exec -T foodgram-backend python manage.py import_ingredients_data
             sudo docker system prune
