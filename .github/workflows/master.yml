@@ -77,7 +77,7 @@ jobs:
           script: |
             cd foodgram/
             sudo docker-compose -f docker-compose.production.yml stop
-            sudo docker system prune
+            sudo docker system prune -af
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gateway:latest
@@ -92,9 +92,9 @@ jobs:
             sudo docker-compose -f docker-compose.production.yml up -d
             sudo docker-compose exec -T foodgram-backend python manage.py makemigrations
             sudo docker-compose exec -T foodgram-backend python manage.py migrate
-            sudo docker-compose exec -T foodgram-backend python manage.py collectstatic
-            cd collected_static/
-            cp -r .  /static_backend/
-            cd ..
+            sudo docker-compose exec -T foodgram-backend python manage.py collectstatic --noinput
+            sudo docker-compose exec -T foodgram-backend cd collected_static/
+            sudo docker-compose exec -T foodgram-backend cp -r .  /static_backend/
+            sudo docker-compose exec -T foodgram-backend cd ..
             sudo docker-compose exec -T foodgram-backend python manage.py import_ingredients_data
-            sudo docker system prune
+            sudo docker system prune -af
