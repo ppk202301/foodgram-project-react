@@ -52,7 +52,7 @@ services:
     depends_on:
       - postgres
 
-  frontend:
+  foodgram-frontend:
     container_name: foodgram-frontend
     hostname: foodgram-frontend
     image: ppk202301/foodgram-frontend
