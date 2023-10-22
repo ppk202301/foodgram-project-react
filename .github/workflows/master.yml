@@ -76,12 +76,14 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             cd foodgram/
+            pwd
             sudo docker-compose -f docker-compose.production.yml stop
             sudo docker system prune -af
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gateway:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/postgres:latest
+            pwd
             rm .env
             touch .env
             echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env

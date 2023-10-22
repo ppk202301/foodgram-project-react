@@ -70,7 +70,6 @@ services:
     extra_hosts:
       foodgram-backend: 172.28.5.2
     image: ppk202301/gateway
-    env_file: .env
     ports:
       - 10000:80
     networks:
