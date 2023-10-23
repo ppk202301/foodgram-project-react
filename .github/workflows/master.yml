@@ -92,7 +92,7 @@ jobs:
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             sudo docker compose -f docker-compose.production.yml up -d
             sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend touch /app/cookbook/cookbook/.env
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> /app/cookbook/cookbook/.env
+            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> /app/cookbook/cookbook/.env'
             sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> /app/cookbook/cookbook/.env
             sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> /app/cookbook/cookbook/.env
             sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend echo DB_HOST=${{ secrets.DB_HOST }} >> /app/cookbook/cookbook/.env
