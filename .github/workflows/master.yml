@@ -77,7 +77,7 @@ jobs:
           script: |
             cd foodgram/
             pwd
-            sudo docker-compose -f docker-compose.production.yml stop
+            sudo docker compose -f docker-compose.production.yml stop
             sudo docker system prune -af
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
