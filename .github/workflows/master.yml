@@ -75,36 +75,34 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            cd foodgram/
-            pwd
-            sudo docker compose -f docker-compose.production.yml stop
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml stop
             sudo docker system prune -af
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gateway:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/postgres:latest
-            rm .env
-            touch .env
-            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-            echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-            echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-            sudo docker compose -f docker-compose.production.yml up -d
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'apt-get update'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'apt-get install nano'            
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend touch /app/cookbook/cookbook/.env
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo DB_HOST=${{ secrets.DB_HOST }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo DB_PORT=${{ secrets.DB_PORT }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml exec -it foodgram-backend bash -c 'echo DEBUG=${{ secrets.DEBUG }} >> /app/cookbook/cookbook/.env'
-            sudo docker compose -f docker-compose.production.yml restart foodgram-backend
-            sudo docker compose -f docker-compose.production.yml exec -T foodgram-backend python manage.py makemigrations
-            sudo docker compose -f docker-compose.production.yml exec -T foodgram-backend python manage.py migrate
-            sudo docker compose -f docker-compose.production.yml exec -T foodgram-backend python manage.py collectstatic --noinput
-            sudo docker compose -f docker-compose.production.yml exec -T foodgram-backend cp -r /app/cookbook/collected_static/ .  /static_backend/
-            sudo docker compose -f docker-compose.production.yml exec -T foodgram-backend python manage.py import_ingredients_data
+            rm /home/yc-user/foodgram/.env
+            touch /home/yc-user/foodgram/.env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> /home/yc-user/foodgram/.env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> /home/yc-user/foodgram/.env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> /home/yc-user/foodgram/.env
+            echo DB_HOST=${{ secrets.DB_HOST }} >> /home/yc-user/foodgram/.env
+            echo DB_PORT=${{ secrets.DB_PORT }} >> /home/yc-user/foodgram/.env
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml up -d
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'apt-get update'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'apt-get install nano'            
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend touch /app/cookbook/cookbook/.env
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c "echo SECRET_KEY='${{ secrets.SECRET_KEY }}' >> /app/cookbook/cookbook/.env"
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> /app/cookbook/cookbook/.env'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> /app/cookbook/cookbook/.env'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> /app/cookbook/cookbook/.env'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'echo DB_HOST=${{ secrets.DB_HOST }} >> /app/cookbook/cookbook/.env'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'echo DB_PORT=${{ secrets.DB_PORT }} >> /app/cookbook/cookbook/.env'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> /app/cookbook/cookbook/.env'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'echo DEBUG=${{ secrets.DEBUG }} >> /app/cookbook/cookbook/.env'
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml restart foodgram-backend
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -T foodgram-backend python manage.py makemigrations
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -T foodgram-backend python manage.py migrate
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -T foodgram-backend python manage.py collectstatic --noinput
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -T foodgram-backend cp -r /app/cookbook/collected_static/ .  /static_backend/
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml exec -T foodgram-backend python manage.py import_ingredients_data
