@@ -114,14 +114,14 @@ class Recipe(models.Model):
     )
     ingredients = models.ManyToManyField(
         Ingredient,
-        through='Ingredient_Recipe',
+        through='IngredientRecipe',
         verbose_name='Recipe ingregiemts',
         related_name='recipes',
         help_text='Add all components to your dish.'
     )
     tags = models.ManyToManyField(
         Tag,
-        through='Recipe_Tag',
+        through='RecipeTag',
         verbose_name='Recipe tags',
         help_text='Add all tags to your recipe.'
     )

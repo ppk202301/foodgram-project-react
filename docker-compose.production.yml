@@ -40,6 +40,7 @@ services:
     hostname: foodgram-backend
     extra_hosts:
       gateway: 172.28.5.3
+      db: 172.28.5.4
     image: ppk202301/foodgram-backend
     networks:
       foodgram-network:

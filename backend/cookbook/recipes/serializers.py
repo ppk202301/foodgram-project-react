@@ -148,7 +148,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     )
     ingredients = IngredientRecipeSaveSerializer(
         many=True,
-        source='Ingredient_Recipe',
+        source='IngredientRecipe',
     )
     image = Base64ImageField()
 
@@ -244,7 +244,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             'tags'
         )
         ingredients = validated_data.pop(
-            'Ingredient_Recipe'
+            'IngredientRecipe'
         )
         recipe = Recipe.objects.create(
             **validated_data
@@ -271,7 +271,7 @@ class RecipeUpdateSerializer(RecipeCreateSerializer):
             )
         if 'Ingredient_Recipe' in validated_data:
             ingredients = validated_data.pop(
-                'Ingredient_Recipe'
+                'IngredientRecipe'
             )
         else:
             ingredients = None
