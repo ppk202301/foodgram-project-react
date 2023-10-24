@@ -75,7 +75,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml down
+            sudo docker compose -f /home/yc-user/foodgram/docker-compose.production.yml stop
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gateway:latest

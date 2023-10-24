@@ -3,13 +3,10 @@ version: '3'
 volumes:
   db_data:
     name: db_data
-    external: false
   static:
     name: static
-    external: false
   media:
     name: media
-    external: false
 
 networks:
   foodgram-network:
