@@ -19,8 +19,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-print(f'Debugging: BASE_DIR = {BASE_DIR}')
-
 load_dotenv(override=True)
 
 # Quick-start development settings - unsuitable for production
@@ -29,16 +27,10 @@ load_dotenv(override=True)
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', default='secret_token')
 
-print(f'Debugging: SECRET_KEY = {SECRET_KEY}')
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False') == 'True'
 
-print(f'Debugging: DEBUG = {DEBUG}')
-
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', default='127.0.0.1, localhost').split(', ')
-
-print(f'Debugging: ALLOWED_HOSTS = {ALLOWED_HOSTS}')
 
 # Application definition
 
@@ -109,9 +101,7 @@ else:
             'HOST': os.getenv('DB_HOST', 'db'),
             'DB_PORT': os.getenv('DB_PORT', '5432'),
         }
-    }    
-
-print(f'Debugging: DATABASES = {DATABASES}')
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -155,9 +145,6 @@ if DEBUG:
 else:
     MEDIA_ROOT = '/media/'
 
-print(f'Debugging: STATIC_ROOT = {STATIC_ROOT}')
-print(f'Debugging: MEDIA_ROOT  = {MEDIA_ROOT}')
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -192,4 +179,4 @@ DJOSER = {
    },
 }
 
-CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+#CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
