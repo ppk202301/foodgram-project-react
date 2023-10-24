@@ -180,4 +180,4 @@ DJOSER = {
 }
 
 CSRF_TRUSTED_ORIGINS = ['https://foodgram-pp.hopto.org']
-#CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
+CSRF_FAILURE_VIEW = 'core.views.csrf_failure'
