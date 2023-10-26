@@ -16,5 +16,3 @@ COPY . .
 WORKDIR /app/cookbook
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "cookbook.wsgi"]
-
-#CMD ["python", "manage.py", "runserver", "0:8000"]
