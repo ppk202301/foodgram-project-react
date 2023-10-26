@@ -75,19 +75,19 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
-            sudo docker compose -f ./foodgram/docker-compose.production.yml stop
+            sudo docker compose -f foodgram/docker-compose.production.yml stop
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gateway:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/postgres:latest
-            rm ./foodgram/.env
-            touch ./foodgram/.env
-            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> ./foodgram/.env
-            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> ./foodgram/.env
-            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> ./foodgram/.env
-            echo DB_HOST=${{ secrets.DB_HOST }} >> ./foodgram/.env
-            echo DB_PORT=${{ secrets.DB_PORT }} >> ./foodgram/.env
-            sudo docker compose -f ./foodgram/docker-compose.production.yml up -d
+            rm foodgram/.env
+            touch foodgram/.env
+            echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> foodgram/.env
+            echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> foodgram/.env
+            echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> foodgram/.env
+            echo DB_HOST=${{ secrets.DB_HOST }} >> foodgram/.env
+            echo DB_PORT=${{ secrets.DB_PORT }} >> foodgram/.env
+            sudo docker compose -f foodgram/docker-compose.production.yml up -d
             sudo docker compose -f ./foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'apt-get update'
             sudo docker compose -f ./foodgram/docker-compose.production.yml exec -it foodgram-backend bash -c 'apt-get install nano'            
             sudo docker compose -f ./foodgram/docker-compose.production.yml exec -it foodgram-backend touch /app/cookbook/cookbook/.env
