@@ -179,14 +179,14 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'Number of ingredients is too small.'
             )
-        
+
         ingredients_list = []
         for el in data:
             if not Ingredient.objects.filter(pk=el['id']).exists():
                 raise serializers.ValidationError(
                     f'Ingredient {el} is not found in the database')
             ingredients_list.append(el['id'])
-        
+
         if len(ingredients_list) != len(set(ingredients_list)):
             raise serializers.ValidationError(
                 'Ingredients should be unique in the request.')
@@ -204,7 +204,8 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             )
         if int(data) < MIN_COOKING_TIME:
             raise serializers.ValidationError(
-                f'Production time should be more than {MIN_COOKING_TIME} min. Found: {data}'
+                f'Production time should be more than '
+                f'{MIN_COOKING_TIME} min. Found: {data}'
             )
         return data
 
@@ -231,7 +232,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         if len(data) < 1:
             raise serializers.ValidationError(
                 'Number of tags is too small.'
-            )    
+            )
         if len(data) != len(set(data)):
             raise serializers.ValidationError(
                 'Tags should be unique in the request.'

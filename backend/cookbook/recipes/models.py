@@ -95,7 +95,10 @@ class Recipe(models.Model):
     cooking_time = models.PositiveIntegerField(
         default=1,
         verbose_name='Recipe production time',
-        help_text=f'Estimate approximate production time in minutes (min {MIN_COOKING_TIME}).',
+        help_text=(
+            f'Estimate approximate production time '
+            f'in minutes (min {MIN_COOKING_TIME}).',
+        ),
         validators=[
             MinValueValidator(
                 MIN_COOKING_TIME,
