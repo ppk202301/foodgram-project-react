@@ -18,6 +18,7 @@ from .models import (
     Ingredient,
     IngredientRecipe,
     MIN_AMOUNT,
+    MIN_COOKING_TIME,
     Recipe,
     Tag,
 )
@@ -168,63 +169,77 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
         )
         return serializer.data
 
-    def validate(self, attrs):
-        """Data validation."""
-        ingredients = self.initial_data.get(
-            'ingredients'
-        )
-        if not ingredients:
+    def validate_ingredients(self, data):
+        """Ingredients list validation."""
+        if data is None:
             raise serializers.ValidationError(
-                'No engidient is found.'
+                'No ingredient is found.'
             )
+        if len(data) < 1:
+            raise serializers.ValidationError(
+                'Number of ingredients is too small.'
+            )
+        
         ingredients_list = []
-        for ingredient in ingredients:
-            ingredients_list.append(
-                ingredient.get('id')
-            )
+        for el in data:
+            if not Ingredient.objects.filter(pk=el['id']).exists():
+                raise serializers.ValidationError(
+                    f'Ingredient {el} is not found in the database')
+            ingredients_list.append(el['id'])
+        
         if len(ingredients_list) != len(set(ingredients_list)):
             raise serializers.ValidationError(
                 'Ingredients should be unique in the request.')
+        return data
 
-        tags = self.initial_data.get(
-            'tags'
-        )
-        if not tags:
+    def validate_cooking_time(self, data):
+        """Cooking time validation."""
+        if data is None:
             raise serializers.ValidationError(
-                'No tag is found.'
+                'No production time value is found.'
             )
-        if len(tags) != len(set(tags)):
+        if not (str(data).isdigit()):
             raise serializers.ValidationError(
-                'Tags should be unique in the request.'
+                f'Production time shoud be a number. Found: {data}'
             )
+        if int(data) < MIN_COOKING_TIME:
+            raise serializers.ValidationError(
+                f'Production time should be more than {MIN_COOKING_TIME} min. Found: {data}'
+            )
+        return data
 
-        text = self.initial_data.get(
-            'text'
-        )
-        if not text:
+    def validate_text(self, data):
+        """Recipe description validation."""
+        if data is None:
             raise serializers.ValidationError(
                 'No description (text) is found.'
             )
-        if str(text) == '':
+
+        if str(data) == '':
             raise serializers.ValidationError(
                 'The description could not be empty.'
             )
+        return data
 
-        cooking_time = self.initial_data.get(
-            'cooking_time'
-        )
-        if not cooking_time:
+    def validate_tags(self, data):
+        """Tags list validation."""
+        if data is None:
             raise serializers.ValidationError(
-                'No cooking_time value is found.'
+                'No tag is found.'
             )
 
-        return attrs
+        if len(data) < 1:
+            raise serializers.ValidationError(
+                'Number of tags is too small.'
+            )    
+        if len(data) != len(set(data)):
+            raise serializers.ValidationError(
+                'Tags should be unique in the request.'
+            )
+        return data
 
     def _add_ingredients_list(self, recipe, ingredients):
         """Add list of ingredients."""
-        if ingredients is None:
-            return
-
         data = []
 
         for ingredient in ingredients:
@@ -250,8 +265,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             **validated_data
         )
 
-        for tag in tags:
-            recipe.tags.add(tag)
+        recipe.tags.set(tags)
 
         self._add_ingredients_list(
             recipe,

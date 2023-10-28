@@ -1,12 +1,14 @@
-from colorfield.fields import ColorField
+from typing import Final
 
+from colorfield.fields import ColorField
 from django.core.validators import MinValueValidator
 from django.db import models
 
 from users.models import User
 
-
-MIN_AMOUNT = 0.001
+MAX_SLUG_NAME_LENGTH: Final[int] = 250
+MIN_AMOUNT: Final[float] = 0.001
+MIN_COOKING_TIME: Final[int] = 1
 
 
 class Ingredient(models.Model):
@@ -50,13 +52,13 @@ class Tag(models.Model):
         help_text='Could not be empty. Must be unique.'
     )
     color = ColorField(
-        max_length=7,
+        max_length=50,
         unique=True,
         verbose_name='Tag color HEX code.',
         help_text='Could not be empty. Must be unique.'
     )
     slug = models.SlugField(
-        max_length=250,
+        max_length=MAX_SLUG_NAME_LENGTH,
         unique=True,
         verbose_name='Tag slag.',
         help_text='Could not be empty. Must be unique.'
@@ -91,13 +93,13 @@ class Recipe(models.Model):
         help_text='Describe your recipe.'
     )
     cooking_time = models.PositiveIntegerField(
-        default=5,
+        default=1,
         verbose_name='Recipe production time',
-        help_text='Estimate approximate production time in minutes (min 5).',
+        help_text=f'Estimate approximate production time in minutes (min {MIN_COOKING_TIME}).',
         validators=[
             MinValueValidator(
-                5,
-                'Production time should be more than 5 min.'
+                MIN_COOKING_TIME,
+                f'Production time should be more than {MIN_COOKING_TIME} min.'
             )
         ]
     )
@@ -217,7 +219,7 @@ class IngredientRecipe(models.Model):
         validators=[
             MinValueValidator(
                 MIN_AMOUNT,
-                'Min value should be more than 0.001.'
+                f'Min value should be more than {MIN_AMOUNT}.'
             ),
         ]
     )
