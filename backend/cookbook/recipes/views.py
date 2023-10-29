@@ -4,15 +4,16 @@ import os
 from django.conf import settings
 from django.db.models import Sum
 from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 
 from rest_framework import (
-    serializers,
     status,
     viewsets,
 )
 from rest_framework.decorators import (
-    action,
+    api_view,
+    permission_classes,
 )
 from rest_framework.permissions import (
     AllowAny,
@@ -107,160 +108,138 @@ class RecipeViewSet(viewsets.ModelViewSet):
             author=self.request.user
         )
 
-    @action(
-        methods=[
-            'post',
-            'delete',
-        ],
-        detail=True,
+
+@api_view(["POST", "DELETE"])
+@permission_classes([IsAuthenticated])
+def shopping_cart(request, recipe_id):
+    """Manage shopping Cart"""
+    user = request.user
+
+    recipe = get_object_or_404(
+        Recipe,
+        id=recipe_id,
     )
-    def favorite(self, request, pk):
-        user = self.request.user
-        recipe = self.get_object()
 
-        if request.method == 'DELETE':
-
-            existing_fav_recipe = Favorite.objects.filter(
-                recipe=recipe,
-                user=user,
-            )
-            if not existing_fav_recipe:
-                raise serializers.ValidationError(
-                    {
-                        'errors': [
-                            ('This recipe is not found in '
-                             'the user favorite list.')
-                        ]
-                    }
-                )
-
-            existing_fav_recipe.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        data = {
-            'recipe': pk,
-            'user': user.id,
-        }
-        new_favorite_recipe = FavoriteSerializer(
-            data=data,
-        )
-
-        new_favorite_recipe.is_valid(
-            raise_exception=True,
-        )
-        new_favorite_recipe.save()
-
-        serializer = RecipeMainInfoSerializer(recipe)
-
+    if request.method == "DELETE":
+        Cart.objects.filter(
+            user=user,
+            recipe=recipe,
+        ).delete()
         return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_204_NO_CONTENT
         )
 
-    @action(
-        methods=[
-            'post',
-            'delete',
-        ],
-        detail=True,
+    data = {
+        'recipe': recipe_id,
+        'user': user.id,
+    }
+    new_cart_recipe = CartSerializer(
+        data=data,
     )
-    def shopping_cart(self, request, pk):
-        user = self.request.user
-        recipe = self.get_object()
 
-        if request.method == 'DELETE':
-            existing_cart_recipe = Cart.objects.filter(
-                recipe=recipe,
-                user=user,
-            )
-            if not existing_cart_recipe:
-                raise serializers.ValidationError(
-                    {
-                        'errors': [
-                            ('This recipe is not found in '
-                             'the user cart.')
-                        ]
-                    }
-                )
+    new_cart_recipe.is_valid(
+        raise_exception=True,
+    )
+    new_cart_recipe.save()
 
-            existing_cart_recipe.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+    serializer = RecipeMainInfoSerializer(recipe)
 
-        data = {
-            'recipe': pk,
-            'user': user.id,
-        }
-        new_cart_recipe = CartSerializer(
-            data=data,
+    return Response(
+        serializer.data,
+        status=status.HTTP_201_CREATED,
+    )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def download_shopping_cart(request):
+    """Create PDF file of ingredients in the shopping cart"""
+    user = request.user
+
+    ingredients_to_buy = list(
+        IngredientRecipe.objects.filter(
+            recipe__carts__user=user
         )
-
-        new_cart_recipe.is_valid(
-            raise_exception=True,
+        .values(
+            'ingredient__id',
+            'ingredient__name',
+            'ingredient__measurement_unit',
         )
-        new_cart_recipe.save()
+        .annotate(sum_amount=Sum('amount'))
+        .order_by('ingredient__id')
+    )
 
-        serializer = RecipeMainInfoSerializer(recipe)
+    html = (
+        get_template('shoppyng_cart.html')
+        .render(
+            {'ingredients': ingredients_to_buy}
+        )
+    )
 
+    font_path = '/fonts/DejaVuSansCondensed.ttf'
+    font_path.replace(
+        os.sep,
+        ntpath.sep
+    )
+    font_path_final = os.path.normpath(
+        str(settings.STATIC_ROOT)
+        + font_path
+    )
+
+    pdf3 = HtmlToPdf()
+    pdf3.add_font(
+        'DejaVu',
+        '',
+        font_path_final,
+    )
+    pdf3.set_font(
+        'DejaVu',
+        '',
+        10
+    )
+    pdf3.add_page()
+    pdf3.write_html(html)
+
+    return HttpResponse(
+        bytes(pdf3.output()),
+        content_type='application/pdf',
+        status=status.HTTP_200_OK
+    )
+
+
+@api_view(["POST", "DELETE"])
+@permission_classes([IsAuthenticated])
+def favorite(request, recipe_id):
+    """Manage Favorite"""
+    recipe = get_object_or_404(
+        Recipe,
+        id=recipe_id,
+    )
+    user = request.user
+
+    if request.method == "DELETE":
+        Favorite.objects.filter(
+            user=user,
+            recipe=recipe,
+        ).delete()
         return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_204_NO_CONTENT
         )
 
-    @action(
-        methods=[
-            'get',
-        ],
-        detail=False,
+    data = {
+        'recipe': recipe_id,
+        'user': user.id,
+    }
+    new_favorite_recipe = FavoriteSerializer(
+        data=data,
     )
-    def download_shopping_cart(self, request):
-        user = self.request.user
+    new_favorite_recipe.is_valid(
+        raise_exception=True,
+    )
+    new_favorite_recipe.save()
 
-        ingredients_to_buy = list(
-            IngredientRecipe.objects.filter(
-                recipe__carts__user=user
-            )
-            .values(
-                'ingredient__id',
-                'ingredient__name',
-                'ingredient__measurement_unit',
-            )
-            .annotate(sum_amount=Sum('amount'))
-            .order_by('ingredient__id')
-        )
-
-        html = (
-            get_template('shoppyng_cart.html')
-            .render(
-                {'ingredients': ingredients_to_buy}
-            )
-        )
-
-        font_path = '/fonts/DejaVuSansCondensed.ttf'
-        font_path.replace(
-            os.sep,
-            ntpath.sep
-        )
-        font_path_final = os.path.normpath(
-            str(settings.STATIC_ROOT)
-            + font_path
-        )
-
-        pdf3 = HtmlToPdf()
-        pdf3.add_font(
-            'DejaVu',
-            '',
-            font_path_final,
-        )
-        pdf3.set_font(
-            'DejaVu',
-            '',
-            10
-        )
-        pdf3.add_page()
-        pdf3.write_html(html)
-
-        return HttpResponse(
-            bytes(pdf3.output()),
-            content_type='application/pdf',
-            status=status.HTTP_200_OK
-        )
+    serializer = RecipeMainInfoSerializer(recipe)
+    return Response(
+        serializer.data,
+        status=status.HTTP_201_CREATED
+    )
