@@ -173,9 +173,9 @@ DJOSER = {
        'set_password': ['rest_framework.permissions.IsAuthenticated'],
    },
    'SERIALIZERS': {
-      'user': 'users.serializers.UserSerializer',
-      'current_user': 'users.serializers.UserSerializer',
-      'user_create': 'users.serializers.UserCreationSerializer',
+      'user': 'api.serializers_users.UserSerializer',
+      'current_user': 'api.serializers_users.UserSerializer',
+      'user_create': 'api.serializers_users.UserCreationSerializer',
    },
 }
 

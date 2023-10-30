@@ -5,7 +5,7 @@ from django.urls import (
 
 from rest_framework.routers import DefaultRouter
 
-from recipes.views import (
+from .views import (
     download_shopping_cart,
     IngredientViewSet,
     favorite,

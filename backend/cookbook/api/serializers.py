@@ -8,11 +8,11 @@ from rest_framework import serializers
 from rest_framework.fields import CurrentUserDefault
 from rest_framework.validators import UniqueTogetherValidator
 
-from users.serializers import (
+from .serializers_users import (
     UserSerializer
 )
 
-from .models import (
+from recipes.models import (
     Cart,
     Favorite,
     Ingredient,

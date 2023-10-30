@@ -23,7 +23,7 @@ from rest_framework.response import Response
 
 from .convert_to_pdf import HtmlToPdf
 from .filters import RecipeFilter
-from .models import (
+from recipes.models import (
     Cart,
     Favorite,
     Ingredient,
@@ -31,7 +31,7 @@ from .models import (
     Recipe,
     Tag,
 )
-from .paginator import RecipeCustomPaginator
+from recipes.paginator import RecipeCustomPaginator
 from .permissions import (
     IsAuthor,
 )

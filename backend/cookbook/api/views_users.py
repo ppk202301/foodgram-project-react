@@ -10,16 +10,16 @@ from rest_framework.permissions import (
 )
 from rest_framework.response import Response
 
-from .models import (
+from users.models import (
     User,
 )
-from .serializers import (
+from .serializers_users import (
     FollowCreateSerializer,
     FollowSaveNewSerializer,
     FollowSerializer,
     UserSerializer,
 )
-from .paginator import (
+from .paginator_users import (
     FollowCustomPaginator,
     UserCustomPaginator,
 )
@@ -89,9 +89,6 @@ class UserViewSet(UserViewSet):
     )
     def subscriptions(self, request):
         user = self.request.user
-
-        print(f'Debugging: user from self.request = {user}')
-        print(f'Debugging: request = {request}')
 
         def queryset():
             return User.objects.filter(

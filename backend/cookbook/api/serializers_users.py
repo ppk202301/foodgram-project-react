@@ -5,12 +5,12 @@ from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import Recipe
 
-from .models import (
+from users.models import (
     Follow,
     User
 )
 
-from .utils import (
+from users.utils import (
     is_subscribed
 )
 
