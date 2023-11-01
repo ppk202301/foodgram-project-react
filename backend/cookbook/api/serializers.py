@@ -284,12 +284,14 @@ class RecipeUpdateSerializer(RecipeCreateSerializer):
             instance.tags.set(
                 validated_data.pop('tags')
             )
-        if 'Ingredient_Recipe' in validated_data:
+        if 'IngredientRecipe' in validated_data:
             ingredients = validated_data.pop(
                 'IngredientRecipe'
             )
         else:
-            ingredients = None
+            raise serializers.ValidationError(
+                'Update of the recipe. Correct ingredient list is not found.'
+            )
 
         instance.name = validated_data.get(
             'name',
