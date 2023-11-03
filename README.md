@@ -100,6 +100,11 @@ python manage.py collectstatic
 python manage.py createsuperuser 
 ``` 
 
+Импортировать с базу список ингредиентов 
+```bash
+python manage.py import_ingredients_data 
+``` 
+
 Зайти по адресу  
 http://localhost/admin  
 и сделать в разделе Tag набор тегов для маркировки рецептов  
@@ -118,7 +123,19 @@ sudo docker exec -it foodgram-backend bash
 python manage.py createsuperuser 
 ``` 
 
+Импортировать с базу список ингредиентов 
+```bash
+python manage.py import_ingredients_data 
+``` 
+
 Зайти по адресу  
 http://site_name/admin  
 и сделать в разделе Tag набор тегов для маркировки рецептов  
 
+## Тестовый сайт с дипломным заданием
+
+Адрес сайта: https://foodgram-pp.hopto.org/
+Админ
+name=adminuser
+email=adminuser@ya.com
+password=AZS012##$$asf!!!!!
