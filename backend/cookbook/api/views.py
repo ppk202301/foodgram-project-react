@@ -83,21 +83,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.request.method == 'GET':
-            if self.action == 'download_shopping_cart':
-                return (
-                    IsAuthenticated(),
-                )
-            return (
-                AllowAny(),
-            )
+            return AllowAny()
 
-        if self.action in (
-            'favorite',
-            'shopping_cart',
-        ):
-            return (
-                IsAuthenticated(),
-            )
         return (
             IsAuthenticated(),
             IsAuthor(),

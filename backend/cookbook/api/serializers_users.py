@@ -23,6 +23,7 @@ class RecipeInfoSerializer(serializers.ModelSerializer):
             'name',
             'text',
             'author',
+            'image',
         )
 
 
