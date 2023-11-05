@@ -22,7 +22,10 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 
 from .convert_to_pdf import HtmlToPdf
-from .filters import RecipeFilter
+from .filters import (
+    IngredientFilter,
+    RecipeFilter
+)
 from recipes.models import (
     Cart,
     Favorite,
@@ -65,6 +68,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         AllowAny,
     )
     queryset = Ingredient.objects.all().order_by('id')
+    filterset_class = IngredientFilter
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
