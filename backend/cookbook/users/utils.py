@@ -1,9 +1,10 @@
 def is_subscribed(self, data):
-    """Retrun TRUE if user has any follower."""
+    """Retrun TRUE if User has follower pointed in data."""
     user = self.context['request'].user
+
     return (
         user.is_authenticated
-        and data.follower.filter(
-            following=user
+        and user.follower.filter(
+            following=data
         ).exists()
     )
