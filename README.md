@@ -37,8 +37,8 @@ git@github.com:ppk202301/foodgram-project-react.git
 DEBUG=False  - опция отладчика, должна быть всегда False для правильной работы ПО  
 SECRET_KEY   - стандартный ключ, который создается при создании Django проекта  
 ALLOWED_HOSTS  - список хостов/доменов, для которых дотсупен текущий проект  
-                 &nbsp;&nbsp;&emsp; изменить IP-адрес сервера и/или добавить имя хоста  
-                 &nbsp;&emsp; пример формата задания значений '127.0.0.1, localhost'  
+                 &nbsp;&nbsp;&nbsp;&nbsp;&emsp; изменить IP-адрес сервера и/или добавить имя хоста  
+                 &nbsp;&nbsp;&nbsp;&nbsp;&emsp; пример формата задания значений '127.0.0.1, localhost'  
 
 POSTGRES_DB    - имя БД - foodgram (по умолчанию)  
 POSTGRES_USER  - логин для подключения к БД - django_user (по умолчанию)  
